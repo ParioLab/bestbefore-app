@@ -9,7 +9,7 @@
         "testStrategy": "Verify that the project builds successfully and runs on both iOS and Android simulators.",
         "priority": "medium",
         "dependencies": [],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -47,7 +47,7 @@
               3
             ],
             "details": "1. On GitHub, create a new repository named `YourProjectName` (without README or license).\n2. Copy the remote URL (SSH or HTTPS).\n3. Run `git remote add origin <remote-URL>` in the project root.\n4. Push the code to GitHub: `git branch -M main && git push -u origin main`.",
-            "status": "pending"
+            "status": "done"
           }
         ]
       },
@@ -62,7 +62,36 @@
           1
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define Theme Variables",
+            "description": "Establish a set of theme variables (colors, fonts, spacing, etc.) to be used throughout the application.",
+            "dependencies": [],
+            "details": "• Identify primary, secondary, and accent colors\n• Define typography scales and font families\n• Set spacing units and border radius values\n• Store variables in a centralized theme object (e.g., theme.js)",
+            "status": "done"
+          },
+          {
+            "id": 2,
+            "title": "Implement ThemeProvider with React Context",
+            "description": "Create a ThemeProvider component that uses React Context to supply theme variables to the component tree.",
+            "dependencies": [
+              1
+            ],
+            "details": "• Create a ThemeContext and default theme value\n• Build a ThemeProvider component that wraps children\n• Ensure theme object is passed via Context.Provider\n• Update root of app (e.g., App.js) to include ThemeProvider",
+            "status": "done"
+          },
+          {
+            "id": 3,
+            "title": "Integrate SafeAreaView and Test Across Devices",
+            "description": "Wrap application layout with SafeAreaView and verify layout and theming across various device form factors.",
+            "dependencies": [
+              2
+            ],
+            "details": "• Import and wrap root view components with SafeAreaView from 'react-native-safe-area-context'\n• Apply theme-based background or styling to SafeAreaView\n• Run manual tests on multiple simulators (iOS and Android) with different screen sizes and notch configurations\n• Log and fix any styling or layout issues",
+            "status": "pending"
+          }
+        ]
       },
       {
         "id": 3,
@@ -406,7 +435,7 @@
     ],
     "metadata": {
       "created": "2025-06-20T20:01:00.316Z",
-      "updated": "2025-06-20T20:04:51.635Z",
+      "updated": "2025-06-20T20:10:36.194Z",
       "description": "Tasks for master context"
     }
   }
