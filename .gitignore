@@ -44,3 +44,18 @@ yarn-error.*
 
 # Cursor
 .cursor
+.cursorrules
+
+# Roo
+.roo
+.roomodes
+
+# Windsurf
+.windsurfrules
+
+# IDEs
+.idea/
+.vscode/
+
+# Logs
+*.log
