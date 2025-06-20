@@ -37,7 +37,7 @@
               2
             ],
             "details": "1. Run `git init` in the project root directory.\n2. Create a `.gitignore` file and add common Node/Expo ignores (e.g., `node_modules/`, `dist/`, `*.expo.*`).\n3. Stage all files with `git add .`.\n4. Commit the initial state: `git commit -m \"chore: initial project setup\"`.",
-            "status": "pending"
+            "status": "done"
           },
           {
             "id": 4,
@@ -406,7 +406,7 @@
     ],
     "metadata": {
       "created": "2025-06-20T20:01:00.316Z",
-      "updated": "2025-06-20T20:04:35.136Z",
+      "updated": "2025-06-20T20:04:51.635Z",
       "description": "Tasks for master context"
     }
   }
