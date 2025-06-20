@@ -61,7 +61,7 @@
         "dependencies": [
           1
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -89,7 +89,7 @@
               2
             ],
             "details": "• Import and wrap root view components with SafeAreaView from 'react-native-safe-area-context'\n• Apply theme-based background or styling to SafeAreaView\n• Run manual tests on multiple simulators (iOS and Android) with different screen sizes and notch configurations\n• Log and fix any styling or layout issues",
-            "status": "pending"
+            "status": "done"
           }
         ]
       },
@@ -435,7 +435,7 @@
     ],
     "metadata": {
       "created": "2025-06-20T20:01:00.316Z",
-      "updated": "2025-06-20T20:10:36.194Z",
+      "updated": "2025-06-20T20:10:51.034Z",
       "description": "Tasks for master context"
     }
   }
