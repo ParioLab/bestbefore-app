@@ -1,41 +1,55 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { StackScreenProps } from '@react-navigation/stack';
-import { RootStackParamList } from '../navigation/types';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../navigation/AppNavigator';
+import BackArrowIcon from '../../assets/images/back-arrow-icon.svg';
+import InfoRow from '../components/InfoRow';
+import { BlurView } from 'expo-blur';
+import dayjs from 'dayjs';
 
-type Props = StackScreenProps<RootStackParamList, 'ProductDetails'>;
+type ProductDetailsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ProductDetails'>;
+type ProductDetailsScreenRouteProp = RouteProp<RootStackParamList, 'ProductDetails'>;
 
-const ProductDetailsScreen = ({ route, navigation }: Props) => {
-  const { item } = route.params;
+const ProductDetailsScreen = () => {
+  const navigation = useNavigation<ProductDetailsScreenNavigationProp>();
+  const route = useRoute<ProductDetailsScreenRouteProp>();
+  const { product } = route.params;
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text>Back</Text>
+          <BackArrowIcon width={24} height={24} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Product Details</Text>
         <View style={{ width: 24 }} />
       </View>
-      <View style={styles.container}>
-        <View style={styles.infoRow}>
-          <Text style={styles.label}>Product Name</Text>
-          <Text style={styles.value}>{item.name}</Text>
-        </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.label}>Expiration Date</Text>
-          <Text style={styles.value}>{item.expiry}</Text>
-        </View>
-        <View style={styles.actions}>
-          <TouchableOpacity style={styles.button}>
-            <Text>Edit</Text>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.sectionTitle}>Product Information</Text>
+        <InfoRow label="Product Name" value={product.name} />
+        <BlurView intensity={20} tint="light" style={[styles.glassmorphism, styles.expirationDateGlass]}>
+          <InfoRow label="Expiration Date" value={dayjs(product.expiryDate).format('YYYY-MM-DD')} />
+        </BlurView>
+        <InfoRow label="Barcode Number" value={product.barcode} />
+        <InfoRow label="Storage Location" value={product.storageLocation} />
+        <BlurView intensity={40} tint="light" style={[styles.glassmorphism, styles.detailsBox]}>
+          <InfoRow label="Product Details" value={product.details} />
+        </BlurView>
+
+        <Text style={styles.sectionTitle}>Actions</Text>
+        <View style={styles.actionsContainer}>
+          <TouchableOpacity style={styles.actionButton}>
+            <Text style={styles.actionButtonText}>Edit</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
-            <Text>Delete</Text>
+          <TouchableOpacity style={styles.actionButton}>
+            <Text style={styles.actionButtonText}>Delete</Text>
           </TouchableOpacity>
         </View>
-      </View>
+        <TouchableOpacity style={styles.continueButton}>
+          <Text style={styles.continueButtonText}>Continue</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -45,41 +59,70 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  container: {
-    flex: 1,
-    padding: 16,
-  },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F5F0',
   },
   headerTitle: {
+    fontFamily: 'Manrope-Bold',
     fontSize: 18,
-    fontWeight: '700',
+    color: '#141414',
   },
-  infoRow: {
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 8,
-  },
-  value: {
-    fontSize: 14,
-    color: '#757575',
-  },
-  actions: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 32,
-  },
-  button: {
+  container: {
     padding: 16,
-    borderRadius: 8,
+  },
+  sectionTitle: {
+    fontFamily: 'Manrope-Bold',
+    fontSize: 22,
+    color: '#141414',
+    marginVertical: 12,
+  },
+  glassmorphism: {
+    padding: 16,
+    borderRadius: 12,
+    marginVertical: 8,
+    overflow: 'hidden',
+  },
+  expirationDateGlass: {
+    backgroundColor: 'rgba(166, 255, 0, 0.21)',
+  },
+  detailsBox: {
+    backgroundColor: 'rgba(255, 115, 0, 0.32)',
+  },
+  actionsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 12,
+  },
+  actionButton: {
     backgroundColor: '#F2F2F2',
+    borderRadius: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    width: '48%',
+    alignItems: 'center',
+  },
+  actionButtonText: {
+    fontFamily: 'Manrope-Bold',
+    fontSize: 14,
+    color: '#141414',
+  },
+  continueButton: {
+    backgroundColor: '#000000',
+    borderRadius: 20,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginVertical: 12,
+  },
+  continueButtonText: {
+    fontFamily: 'Manrope-Bold',
+    fontSize: 14,
+    color: '#FFFFFF',
   },
 });
 

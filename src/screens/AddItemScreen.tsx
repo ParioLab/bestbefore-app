@@ -1,29 +1,88 @@
-import React from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { StackScreenProps } from '@react-navigation/stack';
-import { RootStackParamList } from '../navigation/types';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../navigation/AppNavigator';
+import CustomTextInput from '../components/CustomTextInput';
+import CustomPicker from '../components/CustomPicker';
+import BackArrowIcon from '../../assets/images/back-arrow-icon.svg';
+import BarcodeIcon from '../../assets/images/barcode-icon.svg';
 
-type Props = StackScreenProps<RootStackParamList, 'AddItem'>;
+type AddItemScreenNavigationProp = StackNavigationProp<RootStackParamList, 'AddItem'>;
+type AddItemScreenRouteProp = RouteProp<RootStackParamList, 'AddItem'>;
 
-const AddItemScreen = ({ navigation }: Props) => {
+const AddItemScreen = () => {
+  const navigation = useNavigation<AddItemScreenNavigationProp>();
+  const route = useRoute<AddItemScreenRouteProp>();
+  
+  const [productName, setProductName] = useState('');
+  const [expiryDate, setExpiryDate] = useState('');
+  const [barcode, setBarcode] = useState('');
+  const [category, setCategory] = useState('');
+  const [storageLocation, setStorageLocation] = useState('');
+
+  useEffect(() => {
+    if (route.params?.barcode) {
+      setBarcode(route.params.barcode);
+    }
+  }, [route.params?.barcode]);
+
+  const categoryItems = [
+    { label: 'Select a Category...', value: '' },
+    { label: 'Product', value: 'Product' },
+    { label: 'Condiments', value: 'Condiments' },
+  ];
+
+  const storageLocationItems = [
+    { label: 'Select a Storage Location...', value: '' },
+    { label: 'Fridge', value: 'Fridge' },
+    { label: 'Pantry', value: 'Pantry' },
+  ];
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text>Back</Text>
+          <BackArrowIcon width={24} height={24} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Add Item</Text>
         <View style={{ width: 24 }} />
       </View>
-      <View style={styles.container}>
-        <TextInput style={styles.input} placeholder="Product Name" />
-        <TextInput style={styles.input} placeholder="Expiration Date" />
-        <TextInput style={styles.input} placeholder="Barcode Number" />
-        <TouchableOpacity style={styles.button}>
-          <Text>Add</Text>
+      <ScrollView contentContainerStyle={styles.container}>
+        <CustomTextInput
+          placeholder="Product Name"
+          value={productName}
+          onChangeText={setProductName}
+        />
+        <CustomTextInput
+          placeholder="Expiration Date"
+          value={expiryDate}
+          onChangeText={setExpiryDate}
+        />
+        <CustomTextInput
+          placeholder="Barcode Number"
+          value={barcode}
+          onChangeText={setBarcode}
+          keyboardType="numeric"
+        />
+        <CustomPicker
+          selectedValue={category}
+          onValueChange={(itemValue) => setCategory(itemValue)}
+          items={categoryItems}
+        />
+        <CustomPicker
+          selectedValue={storageLocation}
+          onValueChange={(itemValue) => setStorageLocation(itemValue)}
+          items={storageLocationItems}
+        />
+        <TouchableOpacity style={styles.scanButton} onPress={() => navigation.navigate('ScanBarcode')}>
+          <BarcodeIcon width={20} height={20} />
+          <Text style={styles.scanButtonText}>Scan Barcode</Text>
         </TouchableOpacity>
-      </View>
+        <TouchableOpacity style={styles.addButton}>
+          <Text style={styles.addButtonText}>Add</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -33,32 +92,50 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  container: {
-    flex: 1,
-    padding: 16,
-  },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F5F0',
   },
   headerTitle: {
+    fontFamily: 'Manrope-Bold',
     fontSize: 18,
-    fontWeight: '700',
+    color: '#141414',
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#CCCCCC',
-    borderRadius: 8,
+  container: {
+    flexGrow: 1,
     padding: 16,
+  },
+  scanButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#000000',
+    borderRadius: 20,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
     marginBottom: 16,
   },
-  button: {
+  scanButtonText: {
+    fontFamily: 'Manrope-Bold',
+    fontSize: 14,
+    color: '#FFFFFF',
+    marginLeft: 8,
+  },
+  addButton: {
     backgroundColor: '#000000',
-    padding: 16,
-    borderRadius: 8,
+    borderRadius: 20,
+    paddingVertical: 14,
     alignItems: 'center',
+  },
+  addButtonText: {
+    fontFamily: 'Manrope-Bold',
+    fontSize: 14,
+    color: '#FFFFFF',
   },
 });
 
