@@ -25,15 +25,47 @@ type ProductCardNavigationProp = StackNavigationProp<RootStackParamList, 'Main'>
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const navigation = useNavigation<ProductCardNavigationProp>();
   const isExpiring = dayjs(product.expiryDate).diff(dayjs(), 'day') <= 2;
+  const isLactantia = product.name === 'Lactantia Lactose Free Milk';
 
-  const cardStyle = isExpiring ? 'expiring' : 'glass';
-  const blurContainerStyle = isExpiring ? styles.expiringBlur : styles.glassBlur;
-  const productNameStyle = isExpiring
-    ? styles.expiringProductName
-    : styles.productName;
-  const expiryTextStyle = isExpiring
-    ? styles.expiringExpiryText
-    : styles.expiryText;
+  let cardStyle = 'glass';
+  if (isLactantia) {
+    cardStyle = 'lactantia';
+  } else if (isExpiring) {
+    cardStyle = 'expiring';
+  }
+
+  const getBlurContainerStyle = () => {
+    switch (cardStyle) {
+      case 'lactantia':
+        return styles.lactantiaBlur;
+      case 'expiring':
+        return styles.expiringBlur;
+      default:
+        return styles.glassBlur;
+    }
+  };
+
+  const getProductNameStyle = () => {
+    switch (cardStyle) {
+      case 'lactantia':
+        return styles.lactantiaProductName;
+      case 'expiring':
+        return styles.expiringProductName;
+      default:
+        return styles.productName;
+    }
+  };
+
+  const getExpiryTextStyle = () => {
+    switch (cardStyle) {
+      case 'lactantia':
+        return styles.lactantiaExpiryText;
+      case 'expiring':
+        return styles.expiringExpiryText;
+      default:
+        return styles.expiryText;
+    }
+  };
 
   const handlePress = () => {
     navigation.navigate('ProductDetails', { product });
@@ -45,12 +77,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <BlurView
           intensity={70}
           tint={cardStyle === 'expiring' ? 'dark' : 'light'}
-          style={[styles.blurBase, blurContainerStyle]}
+          style={[styles.blurBase, getBlurContainerStyle()]}
         >
           <Image source={product.image} style={styles.image} />
           <View style={styles.textContainer}>
-            <Text style={productNameStyle}>{product.name}</Text>
-            <Text style={expiryTextStyle}>
+            <Text style={getProductNameStyle()}>{product.name}</Text>
+            <Text style={getExpiryTextStyle()}>
               Expires in {dayjs(product.expiryDate).diff(dayjs(), 'day')} days
             </Text>
           </View>
@@ -83,6 +115,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(250, 250, 250, 0.7)',
     borderColor: 'rgba(255, 255, 255, 0.5)',
   },
+  lactantiaBlur: {
+    backgroundColor: 'rgba(255, 0, 0, 0.4)',
+    borderColor: 'rgba(255, 255, 255, 0.5)',
+  },
   expiringBlur: {
     backgroundColor: 'rgba(255, 0, 0, 0.2)',
     borderColor: 'rgba(255, 255, 255, 0.3)',
@@ -101,6 +137,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#141414',
   },
+  lactantiaProductName: {
+    fontFamily: 'Manrope-Medium',
+    fontSize: 16,
+    color: '#000000',
+  },
   expiringProductName: {
     fontSize: 16,
     color: 'white',
@@ -110,6 +151,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Manrope-Regular',
     fontSize: 14,
     color: '#757575',
+  },
+  lactantiaExpiryText: {
+    fontFamily: 'Manrope-Regular',
+    fontSize: 14,
+    color: '#000000',
   },
   expiringExpiryText: {
     fontSize: 12,
