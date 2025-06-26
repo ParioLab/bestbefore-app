@@ -19,15 +19,15 @@ const WelcomeScreen = ({ navigation }: Props) => {
           <Text style={styles.subtitle}>
             Track your products' expiration dates and reduce waste.
           </Text>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate('Main')}
+          >
+            <BlurView intensity={50} tint="dark" style={styles.blurContainer}>
+              <Text style={styles.buttonText}>Add Products</Text>
+            </BlurView>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('Main')}
-        >
-          <BlurView intensity={50} tint="dark" style={styles.blurContainer}>
-            <Text style={styles.buttonText}>Add Products</Text>
-          </BlurView>
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -40,14 +40,14 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingBottom: 40, // For bottom button
-    paddingTop: 100, // To push content down a bit
+    paddingBottom: 24,
   },
   textContainer: {
     alignItems: 'center',
+    width: '100%',
   },
   title: {
     fontFamily: 'Manrope-Bold',
@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 10,
     overflow: Platform.OS === 'android' ? 'hidden' : 'visible', // Fix for Android shadow
+    marginTop: 24, // Add margin to separate from subtitle
   },
   blurContainer: {
     width: '100%',

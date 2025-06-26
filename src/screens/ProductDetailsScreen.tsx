@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(166, 255, 0, 0.21)',
   },
   detailsBox: {
-    backgroundColor: 'rgba(255, 115, 0, 0.32)',
+    backgroundColor: 'rgba(166, 255, 0, 0.21)',
   },
   actionsContainer: {
     flexDirection: 'row',

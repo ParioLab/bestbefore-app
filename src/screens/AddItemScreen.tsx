@@ -5,8 +5,8 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import CustomTextInput from '../components/CustomTextInput';
 import CustomPicker from '../components/CustomPicker';
-import BackArrowIcon from '../../assets/images/back-arrow-icon.svg';
 import BarcodeIcon from '../../assets/images/barcode-icon.svg';
+import { Ionicons } from '@expo/vector-icons';
 
 type AddItemScreenNavigationProp = StackNavigationProp<RootStackParamList, 'AddItem'>;
 type AddItemScreenRouteProp = RouteProp<RootStackParamList, 'AddItem'>;
@@ -43,7 +43,7 @@ const AddItemScreen = () => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <BackArrowIcon width={24} height={24} />
+          <Ionicons name="arrow-back" size={24} color="#141414" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Add Item</Text>
         <View style={{ width: 24 }} />
@@ -64,16 +64,35 @@ const AddItemScreen = () => {
           value={barcode}
           onChangeText={setBarcode}
           keyboardType="numeric"
+          rightElement={
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ScanBarcode')}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: 16,
+                backgroundColor: '#000',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <BarcodeIcon width={18} height={18} fill="#fff" />
+            </TouchableOpacity>
+          }
         />
         <CustomPicker
           selectedValue={category}
           onValueChange={(itemValue) => setCategory(itemValue)}
           items={categoryItems}
+          style={{ marginBottom: 0 }}
+          rightElement={<Ionicons name="chevron-down" size={20} color="#757575" />}
         />
         <CustomPicker
           selectedValue={storageLocation}
           onValueChange={(itemValue) => setStorageLocation(itemValue)}
           items={storageLocationItems}
+          rightElement={<Ionicons name="chevron-down" size={20} color="#757575" />}
         />
         <TouchableOpacity style={styles.scanButton} onPress={() => navigation.navigate('ScanBarcode')}>
           <BarcodeIcon width={20} height={20} />

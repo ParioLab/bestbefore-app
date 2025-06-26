@@ -6,12 +6,14 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { BlurView } from 'expo-blur';
 import BackArrowIcon from '../../assets/images/back-arrow-icon.svg';
+import ItemNotFoundAlert from '../alerts/ItemNotFoundAlert';
 
 type ScanBarcodeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ScanBarcode'>;
 
 export default function ScanBarcodeScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const navigation = useNavigation<ScanBarcodeScreenNavigationProp>();
+  const [alertVisible, setAlertVisible] = useState(false);
 
   useEffect(() => {
     if (!permission) {
@@ -62,6 +64,10 @@ export default function ScanBarcodeScreen() {
         <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
           <Text style={styles.cancelButtonText}>Cancel</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.simulateButton} onPress={() => setAlertVisible(true)}>
+          <Text style={styles.simulateButtonText}>Simulate Item Not Found</Text>
+        </TouchableOpacity>
+        <ItemNotFoundAlert visible={alertVisible} onClose={() => setAlertVisible(false)} />
       </View>
     </SafeAreaView>
   );
@@ -142,6 +148,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 50,
   },
   cancelButtonText: {
+    color: '#141414',
+    fontFamily: 'Manrope-Bold',
+    fontSize: 14,
+  },
+  simulateButton: {
+    position: 'absolute',
+    bottom: 110,
+    backgroundColor: '#FFD700',
+    borderRadius: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+  },
+  simulateButtonText: {
     color: '#141414',
     fontFamily: 'Manrope-Bold',
     fontSize: 14,

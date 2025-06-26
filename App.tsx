@@ -8,6 +8,9 @@ import {
 } from '@expo-google-fonts/manrope';
 import * as SplashScreen from 'expo-splash-screen';
 import { View, ActivityIndicator } from 'react-native';
+import { AuthProvider } from './src/context/AuthContext';
+import { SettingsProvider } from './src/context/SettingsContext';
+import { ProductProvider } from './src/context/ProductContext';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -32,8 +35,14 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <AppNavigator />
-    </NavigationContainer>
+    <AuthProvider>
+      <SettingsProvider>
+        <ProductProvider>
+          <NavigationContainer>
+            <AppNavigator />
+          </NavigationContainer>
+        </ProductProvider>
+      </SettingsProvider>
+    </AuthProvider>
   );
 }

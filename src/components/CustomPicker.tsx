@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, ReactNode } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Modal, SafeAreaView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
@@ -6,9 +6,11 @@ interface CustomPickerProps {
   selectedValue: string;
   onValueChange: (itemValue: string, itemIndex: number) => void;
   items: { label: string; value: string }[];
+  style?: object;
+  rightElement?: ReactNode;
 }
 
-const CustomPicker: React.FC<CustomPickerProps> = ({ selectedValue, onValueChange, items }) => {
+const CustomPicker: React.FC<CustomPickerProps> = ({ selectedValue, onValueChange, items, style, rightElement }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const selectedLabel = items.find(item => item.value === selectedValue)?.label || items[0]?.label;
@@ -16,10 +18,15 @@ const CustomPicker: React.FC<CustomPickerProps> = ({ selectedValue, onValueChang
 
   return (
     <>
-      <TouchableOpacity style={styles.container} onPress={() => setModalVisible(true)}>
+      <TouchableOpacity style={[styles.container, style]} onPress={() => setModalVisible(true)}>
         <Text style={[styles.text, isPlaceholder && styles.placeholderText]}>
           {selectedLabel}
         </Text>
+        {rightElement && (
+          <View style={styles.rightElementContainer}>
+            {rightElement}
+          </View>
+        )}
       </TouchableOpacity>
       
       <Modal
@@ -61,14 +68,27 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 16,
     marginBottom: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    position: 'relative',
   },
   text: {
     fontFamily: 'Manrope-Regular',
     fontSize: 16,
     color: '#141414',
+    flex: 1,
   },
   placeholderText: {
     color: '#757575',
+  },
+  rightElementContainer: {
+    position: 'absolute',
+    right: 16,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
   },
   modalOverlay: {
     flex: 1,
