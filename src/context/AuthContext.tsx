@@ -69,9 +69,18 @@ import React, {
   /** Create the AuthContext with undefined as initial value */
   const AuthContext = createContext<AuthContextType | undefined>(undefined);
   
+  // DEV ONLY: Mock user for local testing without login
+  const DEV_FAKE_USER = {
+    id: '11111111-1111-1111-1111-111111111111', // valid UUID for dev
+    aud: 'authenticated',
+    email: 'dev@fake.com',
+    // Add any other fields required by Supabase User type if needed
+  } as any; // Use 'as any' for quick dev, or type as User
+  
   /** Provider component that wraps the app and makes auth context available */
   export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [user, setUser] = useState<User | null>(null);
+    // Set default user to DEV_FAKE_USER for dev/testing without login
+    const [user, setUser] = useState<User | null>(DEV_FAKE_USER);
     const [loading, setLoading] = useState(true);
   
     useEffect(() => {

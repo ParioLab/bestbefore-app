@@ -15,13 +15,14 @@ const WelcomeScreen = ({ navigation }: Props) => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <View style={styles.textContainer}>
-          <Text style={styles.title}>Get Started</Text>
+          <Text style={styles.title} testID="welcomeTitle">Get Started</Text>
           <Text style={styles.subtitle}>
             Track your products' expiration dates and reduce waste.
           </Text>
           <TouchableOpacity
             style={styles.button}
             onPress={() => navigation.navigate('Main')}
+            testID="addProductsButton"
           >
             <BlurView intensity={50} tint="dark" style={styles.blurContainer}>
               <Text style={styles.buttonText}>Add Products</Text>

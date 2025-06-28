@@ -8,9 +8,10 @@ interface CustomPickerProps {
   items: { label: string; value: string }[];
   style?: object;
   rightElement?: ReactNode;
+  testID?: string;
 }
 
-const CustomPicker: React.FC<CustomPickerProps> = ({ selectedValue, onValueChange, items, style, rightElement }) => {
+const CustomPicker: React.FC<CustomPickerProps> = ({ selectedValue, onValueChange, items, style, rightElement, testID }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const selectedLabel = items.find(item => item.value === selectedValue)?.label || items[0]?.label;
@@ -18,7 +19,7 @@ const CustomPicker: React.FC<CustomPickerProps> = ({ selectedValue, onValueChang
 
   return (
     <>
-      <TouchableOpacity style={[styles.container, style]} onPress={() => setModalVisible(true)}>
+      <TouchableOpacity style={[styles.container, style]} onPress={() => setModalVisible(true)} testID={testID}>
         <Text style={[styles.text, isPlaceholder && styles.placeholderText]}>
           {selectedLabel}
         </Text>
@@ -34,6 +35,7 @@ const CustomPicker: React.FC<CustomPickerProps> = ({ selectedValue, onValueChang
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
+        testID={testID ? `${testID}-modal` : undefined}
       >
         <TouchableOpacity style={styles.modalOverlay} onPress={() => setModalVisible(false)} activeOpacity={1}>
           <SafeAreaView style={styles.modalContent}>
@@ -41,6 +43,7 @@ const CustomPicker: React.FC<CustomPickerProps> = ({ selectedValue, onValueChang
               <Picker
                 selectedValue={selectedValue}
                 onValueChange={onValueChange}
+                testID={testID ? `${testID}-picker` : undefined}
               >
                 {items.map((item) => (
                   <Picker.Item key={item.value} label={item.label} value={item.value} />

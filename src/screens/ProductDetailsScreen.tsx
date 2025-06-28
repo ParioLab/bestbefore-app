@@ -1,5 +1,32 @@
+/**
+ * @file src/screens/ProductDetailsScreen.tsx
+ * @description
+ * Screen displaying detailed product information and actions.
+ * Allows the user to edit or delete the product.
+ *
+ * Key features:
+ * - Displays product details in a read-only format.
+ * - Provides Edit and Delete actions via the products context.
+ *
+ * @dependencies
+ * - useProducts: Provides deleteProduct method.
+ * - @react-navigation: For routing and navigation.
+ *
+ * @notes
+ * - On delete, navigates back to the previous screen.
+ * - On edit, navigates to AddItemScreen with the product data.
+ */
+
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+} from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
@@ -7,14 +34,45 @@ import BackArrowIcon from '../../assets/images/back-arrow-icon.svg';
 import InfoRow from '../components/InfoRow';
 import { BlurView } from 'expo-blur';
 import dayjs from 'dayjs';
+import { useProducts } from '../hooks/useProducts';
+import { Product as UIProduct } from '../components/ProductCard';
 
-type ProductDetailsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ProductDetails'>;
-type ProductDetailsScreenRouteProp = RouteProp<RootStackParamList, 'ProductDetails'>;
+type DetailsNavProp = StackNavigationProp<RootStackParamList, 'ProductDetails'>;
+type DetailsRouteProp = RouteProp<RootStackParamList, 'ProductDetails'>;
 
-const ProductDetailsScreen = () => {
-  const navigation = useNavigation<ProductDetailsScreenNavigationProp>();
-  const route = useRoute<ProductDetailsScreenRouteProp>();
-  const { product } = route.params;
+const ProductDetailsScreen: React.FC = () => {
+  const navigation = useNavigation<DetailsNavProp>();
+  const route = useRoute<DetailsRouteProp>();
+  const { deleteProduct } = useProducts();
+  const product: UIProduct = route.params.product;
+
+  /**
+   * Confirm and delete the product, then navigate back.
+   */
+  const handleDelete = () => {
+    Alert.alert(
+      'Delete Item',
+      'Are you sure you want to delete this product?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            await deleteProduct(product.id);
+            navigation.goBack();
+          },
+        },
+      ]
+    );
+  };
+
+  /**
+   * Navigate to AddItem screen passing current product for editing.
+   */
+  const handleEdit = () => {
+    navigation.navigate('AddItem', { product });
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -27,44 +85,31 @@ const ProductDetailsScreen = () => {
       </View>
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.sectionTitle}>Product Information</Text>
-        <InfoRow label="Product Name" value={product.name} />
-        <BlurView intensity={20} tint="light" style={[styles.glassmorphism, styles.expirationDateGlass]}>
-          <InfoRow label="Expiration Date" value={dayjs(product.expiryDate).format('YYYY-MM-DD')} />
-        </BlurView>
-        <InfoRow label="Barcode Number" value={product.barcode} />
-        <InfoRow label="Storage Location" value={product.storageLocation} />
-        <BlurView intensity={40} tint="light" style={[styles.glassmorphism, styles.detailsBox]}>
-          <InfoRow label="Product Details" value={product.details} />
-        </BlurView>
-
+        <InfoRow label="Name" value={product.name} />
+        <InfoRow label="Expires" value={dayjs(product.expiryDate).format('YYYY-MM-DD')} />
+        <InfoRow label="Barcode" value={product.barcode} />
+        <InfoRow label="Storage" value={product.storageLocation} />
         <Text style={styles.sectionTitle}>Actions</Text>
         <View style={styles.actionsContainer}>
-          <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity style={styles.actionButton} onPress={handleEdit}>
             <Text style={styles.actionButtonText}>Edit</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity style={styles.actionButton} onPress={handleDelete}>
             <Text style={styles.actionButtonText}>Delete</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.continueButton}>
-          <Text style={styles.continueButtonText}>Continue</Text>
-        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
+  safeArea: { flex: 1, backgroundColor: '#FFFFFF' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#F0F5F0',
   },
@@ -73,57 +118,31 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#141414',
   },
-  container: {
-    padding: 16,
-  },
+  container: { padding: 16 },
   sectionTitle: {
     fontFamily: 'Manrope-Bold',
-    fontSize: 22,
-    color: '#141414',
+    fontSize: 20,
     marginVertical: 12,
-  },
-  glassmorphism: {
-    padding: 16,
-    borderRadius: 12,
-    marginVertical: 8,
-    overflow: 'hidden',
-  },
-  expirationDateGlass: {
-    backgroundColor: 'rgba(166, 255, 0, 0.21)',
-  },
-  detailsBox: {
-    backgroundColor: 'rgba(166, 255, 0, 0.21)',
+    color: '#141414',
   },
   actionsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 12,
+    marginTop: 24,
   },
   actionButton: {
+    flex: 1,
     backgroundColor: '#F2F2F2',
-    borderRadius: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    width: '48%',
+    borderRadius: 8,
+    paddingVertical: 12,
+    marginHorizontal: 4,
     alignItems: 'center',
   },
   actionButtonText: {
     fontFamily: 'Manrope-Bold',
-    fontSize: 14,
+    fontSize: 16,
     color: '#141414',
-  },
-  continueButton: {
-    backgroundColor: '#000000',
-    borderRadius: 20,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginVertical: 12,
-  },
-  continueButtonText: {
-    fontFamily: 'Manrope-Bold',
-    fontSize: 14,
-    color: '#FFFFFF',
   },
 });
 
-export default ProductDetailsScreen; 
+export default ProductDetailsScreen;

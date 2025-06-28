@@ -1,3 +1,13 @@
+/**
+ * @file src/navigation/AppNavigator.tsx
+ * @description
+ * Defines the root stack navigator for the BestBefore app.
+ * Includes Welcome, Main (TabNavigator), AddItem, ScanBarcode, and ProductDetails screens.
+ *
+ * @notes
+ * - Updated AddItem route to accept an optional full product object for editing.
+ */
+
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import WelcomeScreen from '../screens/WelcomeScreen';
@@ -5,15 +15,19 @@ import TabNavigator from './TabNavigator';
 import AddItemScreen from '../screens/AddItemScreen';
 import ScanBarcodeScreen from '../screens/ScanBarcodeScreen';
 import ProductDetailsScreen from '../screens/ProductDetailsScreen';
-import { Product } from '../components/ProductCard';
+import { Product as UIProduct } from '../components/ProductCard';
 
 export type RootStackParamList = {
   Welcome: undefined;
   Main: undefined;
-  AddItem: { barcode?: string };
+  AddItem: { 
+    barcode?: string; 
+    product?: UIProduct; 
+  };
   ScanBarcode: undefined;
-  ProductDetails: { product: Product };
-  // Add other screens here
+  ProductDetails: { 
+    product: UIProduct; 
+  };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -30,4 +44,4 @@ const AppNavigator = () => {
   );
 };
 
-export default AppNavigator; 
+export default AppNavigator;

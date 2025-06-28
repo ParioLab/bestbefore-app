@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import { Platform } from 'react-native';
 import AppNavigator from './src/navigation/AppNavigator.tsx';
 import {
   useFonts,
@@ -11,6 +12,18 @@ import { View, ActivityIndicator } from 'react-native';
 import { AuthProvider } from './src/context/AuthContext';
 import { SettingsProvider } from './src/context/SettingsContext';
 import { ProductProvider } from './src/context/ProductContext';
+
+if (__DEV__ && Platform.OS === 'ios') {
+  try {
+    // @ts-ignore
+    const { autoLaunchApp } = require('expo-dev-client');
+    if (autoLaunchApp) {
+      autoLaunchApp();
+    }
+  } catch (e) {
+    // Ignore if expo-dev-client is not available
+  }
+}
 
 SplashScreen.preventAutoHideAsync();
 
