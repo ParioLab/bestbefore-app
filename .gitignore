@@ -38,6 +38,7 @@ yarn-error.*
 
 # Environment variables
 .env
+.env.test
 
 # Taskmaster
 .taskmaster
@@ -59,3 +60,9 @@ yarn-error.*
 
 # Logs
 *.log
+
+# iOS
+.ios
+
+# Android
+.android
