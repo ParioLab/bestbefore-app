@@ -2,6 +2,7 @@ import 'dotenv/config';
 
 export default ({ config }) => ({
   ...config,
+  owner: "georgeeshes",
   ios: {
     ...(config.ios || {}),
     bundleIdentifier: "com.georgeeshes.bestbefore",

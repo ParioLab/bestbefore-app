@@ -7,6 +7,10 @@ import HomeIcon from '../../assets/images/home-icon.svg';
 import PlusIcon from '../../assets/images/plus-icon.svg';
 import SettingsIcon from '../../assets/images/settings-icon.svg';
 import { BottomTabBar } from '@react-navigation/bottom-tabs';
+import { useNavigation } from '@react-navigation/native';
+import { TouchableOpacity } from 'react-native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from './AppNavigator';
 
 const Tab = createBottomTabNavigator();
 
@@ -29,6 +33,7 @@ const CustomTabBar = (props: any) => {
 };
 
 const TabNavigator = () => {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   return (
     <Tab.Navigator
       tabBar={CustomTabBar}
@@ -58,7 +63,22 @@ const TabNavigator = () => {
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="AddItem" component={AddItemScreen} />
+      <Tab.Screen
+        name="AddItem"
+        component={AddItemScreen}
+        options={{
+          tabBarButton: ({ accessibilityState }) => (
+            <TouchableOpacity
+              onPress={() => navigation.navigate({ name: 'ScanBarcode', params: undefined })}
+              style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}
+              accessibilityLabel="Scan Barcode"
+              testID="scan-barcode-tab"
+            >
+              <PlusIcon width={28} height={28} fill={accessibilityState?.selected ? '#121712' : 'gray'} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
       <Tab.Screen name="Settings" component={SettingsScreen} />
     </Tab.Navigator>
   );

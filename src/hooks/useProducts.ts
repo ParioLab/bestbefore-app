@@ -34,6 +34,8 @@ export interface Product {
   barcode: string;
   storageLocation: string;
   details: string;
+  healthBadges?: string[];
+  healthTips?: string[];
 }
 
 /**
@@ -50,6 +52,8 @@ function mapToUIProduct(p: ContextProduct): Product {
     barcode: p.barcode ?? '',
     storageLocation: p.storage_location,
     details: p.details ?? '',
+    healthBadges: p.badges ?? [],
+    healthTips: p.health_tips ?? [],
   };
 }
 

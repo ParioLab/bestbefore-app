@@ -17,7 +17,7 @@
  * - On edit, navigates to AddItemScreen with the product data.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -43,8 +43,10 @@ type DetailsRouteProp = RouteProp<RootStackParamList, 'ProductDetails'>;
 const ProductDetailsScreen: React.FC = () => {
   const navigation = useNavigation<DetailsNavProp>();
   const route = useRoute<DetailsRouteProp>();
-  const { deleteProduct } = useProducts();
+  const { deleteProduct, addProduct } = useProducts();
   const product: UIProduct = route.params.product;
+  const [isConfirming, setIsConfirming] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
 
   /**
    * Confirm and delete the product, then navigate back.
@@ -74,6 +76,36 @@ const ProductDetailsScreen: React.FC = () => {
     navigation.navigate('AddItem', { product });
   };
 
+  /**
+   * Confirm and add the product to the database and home list.
+   */
+  const handleConfirm = async () => {
+    setIsConfirming(true);
+    try {
+      await addProduct({
+        name: product.name,
+        barcode: product.barcode,
+        expiry_date: product.expiryDate,
+        category: (product as any).category || 'NaN',
+        storage_location: product.storageLocation,
+        details: product.details || '',
+        badges: product.healthBadges || [],
+        health_tips: product.healthTips || [],
+      });
+      setConfirmed(true);
+      Alert.alert('Product Added', 'This product has been added to your list.', [
+        {
+          text: 'OK',
+          onPress: () => navigation.navigate('Main'),
+        },
+      ]);
+    } catch (error) {
+      Alert.alert('Error', 'There was a problem adding the product.');
+    } finally {
+      setIsConfirming(false);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
@@ -89,6 +121,36 @@ const ProductDetailsScreen: React.FC = () => {
         <InfoRow label="Expires" value={dayjs(product.expiryDate).format('YYYY-MM-DD')} />
         <InfoRow label="Barcode" value={product.barcode} />
         <InfoRow label="Storage" value={product.storageLocation} />
+
+        {/* Health Badges */}
+        {product.healthBadges && product.healthBadges.length > 0 && (
+          <View style={{ marginTop: 16 }}>
+            <Text style={styles.sectionTitle}>Health Badges</Text>
+            <View style={styles.badgesContainer}>
+              {product.healthBadges.map((badge, idx) => (
+                <View key={idx} style={styles.badge}>
+                  <Text style={styles.badgeText}>{badge}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* Health Tips */}
+        {product.healthTips && product.healthTips.length > 0 && (
+          <View style={{ marginTop: 16 }}>
+            <Text style={styles.sectionTitle}>Health Tips</Text>
+            <View style={styles.tipsContainer}>
+              {product.healthTips.map((tip, idx) => (
+                <View key={idx} style={styles.tipRow}>
+                  <Text style={styles.bullet}>{'\u2022'}</Text>
+                  <Text style={styles.tipText}>{tip}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+
         <Text style={styles.sectionTitle}>Actions</Text>
         <View style={styles.actionsContainer}>
           <TouchableOpacity style={styles.actionButton} onPress={handleEdit}>
@@ -99,6 +161,17 @@ const ProductDetailsScreen: React.FC = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
+      {/* Confirm Button at the bottom */}
+      <View style={styles.confirmButtonContainer}>
+        <TouchableOpacity
+          style={[styles.confirmButton, confirmed && { backgroundColor: '#B0B0B0' }]}
+          onPress={handleConfirm}
+          disabled={isConfirming || confirmed}
+          testID="confirm-product-button"
+        >
+          <Text style={styles.confirmButtonText}>{confirmed ? 'Confirmed' : isConfirming ? 'Confirming...' : 'Confirm'}</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -142,6 +215,63 @@ const styles = StyleSheet.create({
     fontFamily: 'Manrope-Bold',
     fontSize: 16,
     color: '#141414',
+  },
+  badgesContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 8,
+  },
+  badge: {
+    backgroundColor: '#E0F7E9',
+    borderRadius: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  badgeText: {
+    fontFamily: 'Manrope-Medium',
+    fontSize: 14,
+    color: '#1B7F5A',
+  },
+  tipsContainer: {
+    marginTop: 8,
+  },
+  tipRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 4,
+  },
+  bullet: {
+    fontSize: 16,
+    color: '#1B7F5A',
+    marginRight: 8,
+    lineHeight: 20,
+  },
+  tipText: {
+    fontFamily: 'Manrope-Regular',
+    fontSize: 14,
+    color: '#141414',
+    flex: 1,
+    lineHeight: 20,
+  },
+  confirmButtonContainer: {
+    padding: 16,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderTopColor: '#F0F5F0',
+  },
+  confirmButton: {
+    backgroundColor: '#000',
+    borderRadius: 20,
+    paddingVertical: 16,
+    alignItems: 'center',
+  },
+  confirmButtonText: {
+    fontFamily: 'Manrope-Bold',
+    fontSize: 16,
+    color: '#fff',
   },
 });
 

@@ -63,6 +63,8 @@ yarn-error.*
 
 # iOS
 .ios
+ios/
 
 # Android
 .android
+android/

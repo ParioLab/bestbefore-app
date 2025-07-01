@@ -29,6 +29,8 @@ create table if not exists products (
   category text not null,
   storage_location text not null,
   details text,
+  badges text[],  -- Array of health badges (e.g., 'High Fiber', 'Low Sugar')
+  health_tips text[],  -- Array of health tips generated from badges
   created_at timestamptz not null default now()
 );
 /* Index to efficiently query by user and expiry date */

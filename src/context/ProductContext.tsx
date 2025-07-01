@@ -32,6 +32,8 @@ export interface Product {
   storage_location: string;
   details: string | null;
   created_at: string;
+  badges?: string[];
+  health_tips?: string[];
 }
 
 export interface ProductContextType {

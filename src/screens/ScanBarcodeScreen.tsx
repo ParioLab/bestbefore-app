@@ -80,12 +80,24 @@ export default function ScanBarcodeScreen() {
 
     const result = await lookupBarcode(data);
 
-    if (result.success) {
-      // Navigate to AddItem with the scanned barcode
-      navigation.navigate('AddItem', { barcode: data });
+    if (result.success && result.data) {
+      // Map Open Food Facts data to Product type
+      navigation.navigate('ProductDetails', {
+        product: {
+          id: Date.now().toString(), // Temporary unique id
+          name: result.data.productName || 'Unknown Product',
+          expiryDate: result.data.expirationDate || '',
+          image: require('../../assets/images/default-product-image.png'), // Default image
+          barcode: data,
+          storageLocation: 'Fridge', // Default location
+          details: '', // No details from API
+          healthBadges: result.data.badges || [],
+          healthTips: [], // No tips from API
+        },
+      });
     } else {
-      // Show not-found alert
-      setAlertVisible(true);
+      // Navigate to AddItemScreen for manual entry
+      navigation.navigate('AddItem', { barcode: data });
     }
   };
 
@@ -132,6 +144,12 @@ export default function ScanBarcodeScreen() {
             color="#FFFFFF"
           />
         )}
+        <TouchableOpacity
+          style={styles.manualEntryButton}
+          onPress={() => navigation.navigate({ name: 'AddItem', params: {} })}
+        >
+          <Text style={styles.manualEntryButtonText}>Enter Product Manually</Text>
+        </TouchableOpacity>
         <TouchableOpacity
           style={styles.cancelButton}
           onPress={() => navigation.goBack()}
@@ -233,6 +251,21 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   permissionButtonText: {
+    color: '#FFFFFF',
+    fontFamily: 'Manrope-Bold',
+    fontSize: 16,
+  },
+  manualEntryButton: {
+    position: 'absolute',
+    bottom: 110,
+    backgroundColor: '#121712',
+    borderRadius: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 40,
+    alignSelf: 'center',
+    zIndex: 2,
+  },
+  manualEntryButtonText: {
     color: '#FFFFFF',
     fontFamily: 'Manrope-Bold',
     fontSize: 16,

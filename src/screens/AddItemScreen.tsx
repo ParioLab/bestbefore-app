@@ -37,14 +37,45 @@ import BarcodeIcon from '../../assets/images/barcode-icon.svg';
 import { Ionicons } from '@expo/vector-icons';
 import { useProducts } from '../hooks/useProducts';
 import { Product as UIProduct } from '../components/ProductCard';
+import { useBarcodeLookup } from '../hooks/useBarcodeLookup';
 
 type AddItemNavProp = StackNavigationProp<RootStackParamList, 'AddItem'>;
 type AddItemRouteProp = RouteProp<RootStackParamList, 'AddItem'>;
+
+// Badge to tip mapping
+const BADGE_TIPS: Record<string, string> = {
+  'High Fiber': 'Good source of fiber.',
+  'Moderate Salt': 'Contains moderate salt. Monitor your sodium intake.',
+  'Ultra-Processed': 'This product is ultra-processed. Try to balance it with whole foods.',
+  'Low Sugar': 'Low in sugar. Suitable for low-sugar diets.',
+  'High Protein': 'Good source of protein for muscle building.',
+  'Low Saturated Fat': 'Low in saturated fat. Heart-healthy choice.',
+  'Low Calories': 'Low calorie. Good for weight management.',
+  'High Calcium': 'High in calcium. Supports bone health.',
+  'High Iron': 'Rich in iron. Supports healthy blood.',
+  'High Potassium': 'High in potassium. Supports heart and muscle function.',
+  'Low Cholesterol': 'Low in cholesterol. Heart-healthy.',
+};
+
+function getHealthTipsFromBadges(badges: string[]): string[] {
+  const tips: string[] = [];
+  for (const badge of badges) {
+    if (BADGE_TIPS[badge]) {
+      tips.push(BADGE_TIPS[badge]);
+    }
+  }
+  // Optionally, add generic tips for certain badge combinations
+  if (badges.includes('Ultra-Processed')) {
+    tips.push('Try to include more whole, minimally processed foods in your diet.');
+  }
+  return tips;
+}
 
 const AddItemScreen: React.FC = () => {
   const navigation = useNavigation<AddItemNavProp>();
   const route = useRoute<AddItemRouteProp>();
   const { addProduct, updateProduct } = useProducts();
+  const { lookupBarcode } = useBarcodeLookup();
 
   // Check if we're editing an existing product
   const productToEdit = route.params?.product;
@@ -88,7 +119,16 @@ const AddItemScreen: React.FC = () => {
           storage_location: storageLocation,
         });
       } else {
-        // Add new product
+        // Add new product with health badges and tips
+        let badges: string[] = [];
+        let health_tips: string[] = [];
+        if (barcode) {
+          const result = await lookupBarcode(barcode);
+          if (result.success && result.data?.badges) {
+            badges = result.data.badges;
+            health_tips = getHealthTipsFromBadges(badges);
+          }
+        }
         await addProduct({
           name: productName,
           barcode,
@@ -96,6 +136,8 @@ const AddItemScreen: React.FC = () => {
           category,
           storage_location: storageLocation,
           details: '',
+          badges,
+          health_tips,
         });
       }
       navigation.goBack();
@@ -107,9 +149,15 @@ const AddItemScreen: React.FC = () => {
 
   const categoryItems = [
     { label: 'Select a Category...', value: '' },
-    { label: 'Fridge', value: 'Fridge' },
-    { label: 'Pantry', value: 'Pantry' },
-    { label: 'Freezer', value: 'Freezer' },
+    { label: 'Condiments', value: 'Condiments' },
+    { label: 'Dairy', value: 'Dairy' },
+    { label: 'Produce', value: 'Produce' },
+    { label: 'Meat', value: 'Meat' },
+    { label: 'Bakery', value: 'Bakery' },
+    { label: 'Snacks', value: 'Snacks' },
+    { label: 'Beverages', value: 'Beverages' },
+    { label: 'Frozen', value: 'Frozen' },
+    { label: 'Other', value: 'Other' },
   ];
 
   const storageLocationItems = [

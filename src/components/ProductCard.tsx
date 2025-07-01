@@ -14,6 +14,8 @@ export interface Product {
   barcode: string;
   storageLocation: string;
   details: string;
+  healthBadges?: string[];
+  healthTips?: string[];
 }
 
 interface ProductCardProps {
