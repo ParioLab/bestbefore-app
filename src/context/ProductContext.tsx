@@ -32,6 +32,7 @@ export interface Product {
   storage_location: string;
   details: string | null;
   created_at: string;
+  nutrition_grade?: string;
   badges?: string[];
   health_tips?: string[];
 }

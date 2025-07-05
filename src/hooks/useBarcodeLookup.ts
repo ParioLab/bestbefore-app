@@ -26,6 +26,7 @@ export interface FoodProduct {
   brands?: string;
   badges?: string[]; // Health badges
   expirationDate?: string; // ISO date string if available
+  nutritionGrade?: string; // Add nutrition grade
 }
 
 /** Result of attempting to look up a barcode */
@@ -146,6 +147,7 @@ export function useBarcodeLookup() {
           brands: undefined, // Not included in v2 fields requested
           badges,
           expirationDate: product.expiration_date || undefined,
+          nutritionGrade: product.nutrition_grades || product.nutriscore_data?.grade || undefined, // Extract nutrition grade
         };
         // Optionally, you can extend FoodProduct and BarcodeLookupResult to include more fields from v2 (nutriscore, nutriments, etc.)
         return { success: true, data: result };

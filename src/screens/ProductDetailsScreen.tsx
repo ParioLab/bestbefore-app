@@ -106,6 +106,18 @@ const ProductDetailsScreen: React.FC = () => {
     }
   };
 
+  /**
+   * Helper to get expiry status string.
+   */
+  const getExpiryStatus = () => {
+    const today = dayjs().startOf('day');
+    const expiry = dayjs(product.expiryDate).startOf('day');
+    if (expiry.isBefore(today)) return 'Product is Expired';
+    if (expiry.isSame(today)) return 'Expires today';
+    const diff = expiry.diff(today, 'day');
+    return `Expires in ${diff} day${diff === 1 ? '' : 's'}`;
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
@@ -118,7 +130,7 @@ const ProductDetailsScreen: React.FC = () => {
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.sectionTitle}>Product Information</Text>
         <InfoRow label="Name" value={product.name} />
-        <InfoRow label="Expires" value={dayjs(product.expiryDate).format('YYYY-MM-DD')} />
+        <InfoRow label="Expires" value={getExpiryStatus()} />
         <InfoRow label="Barcode" value={product.barcode} />
         <InfoRow label="Storage" value={product.storageLocation} />
 

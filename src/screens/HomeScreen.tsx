@@ -9,9 +9,9 @@ import {
   SafeAreaView,
   ActivityIndicator,
 } from 'react-native';
-import ProductCard, { Product as UIProduct } from '../components/ProductCard';
 import SearchIcon from '../../assets/images/search-icon.svg';
 import { useProducts } from '../hooks/useProducts';
+import ProductSummaryCard from '../components/ProductSummaryCard';
 
 /**
  * HomeScreen displays a list of products (mock or fetched).
@@ -35,12 +35,11 @@ const HomeScreen = () => {
         {loading ? (
           <ActivityIndicator size="large" style={styles.loadingIndicator} />
         ) : (
-          <FlatList
-            data={products}
-            renderItem={({ item }) => <ProductCard product={item} />}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.listContainer}
-          />
+          <View>
+            {products.map((product) => (
+              <ProductSummaryCard key={product.id} product={product} />
+            ))}
+          </View>
         )}
       </View>
     </SafeAreaView>
@@ -70,6 +69,5 @@ const styles = StyleSheet.create({
     fontFamily: 'Manrope-Regular',
     fontSize: 16,
   },
-  listContainer: { paddingHorizontal: 16 },
   loadingIndicator: { marginTop: 50 },
 });

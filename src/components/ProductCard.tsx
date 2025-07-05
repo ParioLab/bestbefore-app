@@ -14,6 +14,7 @@ export interface Product {
   barcode: string;
   storageLocation: string;
   details: string;
+  nutrition_grade?: string;
   healthBadges?: string[];
   healthTips?: string[];
 }
