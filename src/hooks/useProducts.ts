@@ -69,9 +69,9 @@ export function useProducts() {
   const context = useProductsContext();
 
   // Use fetched data if available, else fallback
-  const products = !context.loading && context.products.length > 0
+  const products = context.products.length > 0
     ? context.products.map(mapToUIProduct)
-    : mockProducts;
+    : (!context.loading ? mockProducts : []);
 
   return {
     ...context,

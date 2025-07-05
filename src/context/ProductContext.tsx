@@ -109,11 +109,13 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
    */
   const addProduct = async (data: Omit<Product, 'id' | 'created_at'>) => {
     if (!user) return;
-    await enqueueAction('ADD', data);
+    // Try to insert directly
     const { error } = await supabase
       .from('products')
       .insert({ ...data, user_id: user.id });
     if (error) {
+      // If error (likely offline), enqueue for later sync
+      await enqueueAction('ADD', data);
       console.warn('addProduct: offline or error, action queued', error);
     }
     await fetchProducts();

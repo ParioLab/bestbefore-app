@@ -135,9 +135,9 @@ const ProductDetailsScreen: React.FC = () => {
         <InfoRow label="Storage" value={product.storageLocation} />
 
         {/* Health Badges */}
-        {product.healthBadges && product.healthBadges.length > 0 && (
-          <View style={{ marginTop: 16 }}>
-            <Text style={styles.sectionTitle}>Health Badges</Text>
+        <View style={{ marginTop: 16 }}>
+          <Text style={styles.sectionTitle}>Health Badges</Text>
+          {product.healthBadges && product.healthBadges.length > 0 ? (
             <View style={styles.badgesContainer}>
               {product.healthBadges.map((badge, idx) => (
                 <View key={idx} style={styles.badge}>
@@ -145,13 +145,15 @@ const ProductDetailsScreen: React.FC = () => {
                 </View>
               ))}
             </View>
-          </View>
-        )}
+          ) : (
+            <Text style={styles.badgeText}>--</Text>
+          )}
+        </View>
 
         {/* Health Tips */}
-        {product.healthTips && product.healthTips.length > 0 && (
-          <View style={{ marginTop: 16 }}>
-            <Text style={styles.sectionTitle}>Health Tips</Text>
+        <View style={{ marginTop: 16 }}>
+          <Text style={styles.sectionTitle}>Health Tips</Text>
+          {product.healthTips && product.healthTips.length > 0 ? (
             <View style={styles.tipsContainer}>
               {product.healthTips.map((tip, idx) => (
                 <View key={idx} style={styles.tipRow}>
@@ -160,8 +162,10 @@ const ProductDetailsScreen: React.FC = () => {
                 </View>
               ))}
             </View>
-          </View>
-        )}
+          ) : (
+            <Text style={styles.tipText}>--</Text>
+          )}
+        </View>
 
         <Text style={styles.sectionTitle}>Actions</Text>
         <View style={styles.actionsContainer}>

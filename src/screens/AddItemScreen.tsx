@@ -123,12 +123,11 @@ const AddItemScreen: React.FC = () => {
         // Add new product with health badges and tips
         let badges: string[] = [];
         let health_tips: string[] = [];
-        if (barcode) {
-          const result = await lookupBarcode(barcode);
-          if (result.success && result.data?.badges) {
-            badges = result.data.badges;
-            health_tips = getHealthTipsFromBadges(badges);
-          }
+        // Only populate badges/tips if lookupBarcode returns badges (i.e., not manual entry)
+        const result = await lookupBarcode(barcode);
+        if (result.success && result.data?.badges && result.data.badges.length > 0) {
+          badges = result.data.badges;
+          health_tips = getHealthTipsFromBadges(badges);
         }
         await addProduct({
           name: productName,
@@ -140,7 +139,7 @@ const AddItemScreen: React.FC = () => {
           badges,
           health_tips,
         });
-        navigation.goBack();
+        navigation.navigate('Main');
       }
     } catch (error) {
       console.error('Error saving product:', error);
