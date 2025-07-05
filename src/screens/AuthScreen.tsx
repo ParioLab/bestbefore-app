@@ -27,6 +27,9 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import CustomTextInput from '../components/CustomTextInput';
 import { useAuth } from '../context/AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const SHOW_WELCOME_KEY = 'showWelcomeOnNextLogin';
 
 const AuthScreen: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -55,12 +58,21 @@ const AuthScreen: React.FC = () => {
       if (mode === 'login') {
         const { error: signInError, data } = await signIn(email, password);
         if (signInError) throw signInError;
-        navigation.replace('Main');
+        // Check AsyncStorage for welcome flag
+        const showWelcome = await AsyncStorage.getItem(SHOW_WELCOME_KEY);
+        if (showWelcome === 'true') {
+          await AsyncStorage.removeItem(SHOW_WELCOME_KEY);
+          navigation.replace('Welcome');
+        } else {
+          navigation.replace('Main');
+        }
       } else {
         const { error: signUpError } = await signUp(email, password);
         if (signUpError) throw signUpError;
+        // Set AsyncStorage flag to show WelcomeScreen after next login
+        await AsyncStorage.setItem(SHOW_WELCOME_KEY, 'true');
         setMode('login');
-        setError('Account created! Please log in.');
+        setError('Account created! Please confirm your email, then log in.');
       }
     } catch (err: any) {
       const msg = err?.message || '';

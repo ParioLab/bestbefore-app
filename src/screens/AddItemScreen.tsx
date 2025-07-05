@@ -118,6 +118,7 @@ const AddItemScreen: React.FC = () => {
           category,
           storage_location: storageLocation,
         });
+        navigation.navigate('Main');
       } else {
         // Add new product with health badges and tips
         let badges: string[] = [];
@@ -139,8 +140,8 @@ const AddItemScreen: React.FC = () => {
           badges,
           health_tips,
         });
+        navigation.goBack();
       }
-      navigation.goBack();
     } catch (error) {
       console.error('Error saving product:', error);
       Alert.alert('Error', 'There was a problem saving the product.');

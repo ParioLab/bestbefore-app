@@ -118,12 +118,12 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.5)',
   },
   lactantiaBlur: {
-    backgroundColor: 'rgba(255, 0, 0, 0.4)',
+    backgroundColor: 'rgba(250, 89, 89, 0.61)',
     borderColor: 'rgba(255, 255, 255, 0.5)',
   },
   expiringBlur: {
-    backgroundColor: 'rgba(255, 0, 0, 0.2)',
-    borderColor: 'rgba(255, 255, 255, 0.3)',
+    backgroundColor: 'rgba(254, 103, 103, 0.85)', // Figma red with some transparency
+    borderColor: 'rgba(251, 89, 89, 0.28)',       // Figma border
   },
   image: {
     width: 56,
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   },
   expiringExpiryText: {
     fontSize: 12,
-    color: '#FF6B6B',
+    color: '#FF9E9E',
     fontFamily: 'Manrope-Bold',
   },
 });
