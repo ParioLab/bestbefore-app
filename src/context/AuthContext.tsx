@@ -4,12 +4,12 @@
  * @file src/context/AuthContext.tsx
  * @description
  * Provides authentication context for the BestBefore app using Supabase Auth.
- * Manages the user's session state and exposes sign-up, sign-in, and sign-out methods.
+ * Manages the user's session state and exposes sign-up, sign-in, sign-out, and password reset methods.
  *
  * Key features:
  * - Initializes and tracks the current Supabase session
  * - Listens for auth state changes to keep user state in sync
- * - Exposes methods: signUp, signIn, signOut
+ * - Exposes methods: signUp, signIn, signOut, resetPassword
  *
  * @dependencies
  * - @supabase/supabase-js: Supabase client for auth operations
@@ -64,6 +64,11 @@ import React, {
      * @returns Supabase error if any
      */
     signOut: () => Promise<{ error: AuthError | null }>;
+    /**
+     * Sends a password reset email to the specified email address.
+     * @returns Supabase AuthResponse
+     */
+    resetPassword: (email: string) => Promise<AuthResponse>;
   }
   
   /** Create the AuthContext with undefined as initial value */
@@ -110,10 +115,12 @@ import React, {
     const signIn = (email: string, password: string) =>
       supabase.auth.signInWithPassword({ email, password });
     const signOut = () => supabase.auth.signOut();
+    const resetPassword = (email: string) =>
+      supabase.auth.resetPasswordForEmail(email);
   
     return (
       <AuthContext.Provider
-        value={{ user, loading, signUp, signIn, signOut }}
+        value={{ user, loading, signUp, signIn, signOut, resetPassword }}
       >
         {children}
       </AuthContext.Provider>

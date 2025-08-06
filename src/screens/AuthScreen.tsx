@@ -9,10 +9,11 @@
  * - Inputs: email, password, confirmPassword (signup only).
  * - Inline validation for required fields and password confirmation.
  * - Displays errors from Supabase responses.
+ * - Forgot password functionality with email reset.
  *
  * @dependencies
  * - react-navigation: For navigation and route params.
- * - useAuth: Custom hook providing signUp and signIn functions.
+ * - useAuth: Custom hook providing signUp, signIn, and resetPassword functions.
  * - CustomTextInput: Reusable styled text input component.
  *
  * @notes
@@ -33,7 +34,7 @@ const SHOW_WELCOME_KEY = 'showWelcomeOnNextLogin';
 
 const AuthScreen: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-  const { signIn, signUp, loading: authLoading } = useAuth();
+  const { signIn, signUp, resetPassword, loading: authLoading } = useAuth();
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -41,6 +42,8 @@ const AuthScreen: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [resent, setResent] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [passwordResetSent, setPasswordResetSent] = useState(false);
 
   const handleSubmit = async () => {
     setError(null);
@@ -100,6 +103,26 @@ const AuthScreen: React.FC = () => {
     }
   };
 
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setError('Please enter your email address first.');
+      return;
+    }
+    
+    setError(null);
+    setSubmitting(true);
+    try {
+      const { error: resetError } = await resetPassword(email);
+      if (resetError) throw resetError;
+      setPasswordResetSent(true);
+      setShowForgotPassword(false);
+    } catch (err: any) {
+      setError('Failed to send password reset email. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const showResend =
     mode === 'login' &&
     error &&
@@ -134,6 +157,9 @@ const AuthScreen: React.FC = () => {
             {resent && (
               <Text style={styles.resentMsg}>Confirmation email resent! Please check your inbox.</Text>
             )}
+            {passwordResetSent && (
+              <Text style={styles.resentMsg}>Password reset email sent! Please check your inbox.</Text>
+            )}
             <CustomTextInput
               placeholder="Email"
               value={email}
@@ -160,6 +186,28 @@ const AuthScreen: React.FC = () => {
                 autoComplete="password"
               />
             )}
+            {mode === 'login' && (
+              <TouchableOpacity
+                style={styles.forgotPasswordButton}
+                onPress={() => setShowForgotPassword(!showForgotPassword)}
+                disabled={submitting || authLoading}
+              >
+                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+              </TouchableOpacity>
+            )}
+            {showForgotPassword && mode === 'login' && (
+              <TouchableOpacity
+                style={styles.resetPasswordButton}
+                onPress={handleForgotPassword}
+                disabled={submitting || authLoading}
+              >
+                {submitting ? (
+                  <ActivityIndicator color="#121712" />
+                ) : (
+                  <Text style={styles.resetPasswordButtonText}>Send Reset Email</Text>
+                )}
+              </TouchableOpacity>
+            )}
             <TouchableOpacity
               style={styles.button}
               onPress={handleSubmit}
@@ -177,6 +225,8 @@ const AuthScreen: React.FC = () => {
                 setMode(mode === 'login' ? 'signup' : 'login');
                 setError(null);
                 setResent(false);
+                setShowForgotPassword(false);
+                setPasswordResetSent(false);
               }}
               disabled={submitting || authLoading}
             >
@@ -275,6 +325,32 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 8,
     textAlign: 'center',
+  },
+  forgotPasswordButton: {
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  forgotPasswordText: {
+    color: '#121712',
+    fontFamily: 'Manrope-Regular',
+    fontSize: 14,
+    textDecorationLine: 'underline',
+  },
+  resetPasswordButton: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#121712',
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+    marginBottom: 8,
+    width: 200,
+  },
+  resetPasswordButtonText: {
+    color: '#121712',
+    fontFamily: 'Manrope-Bold',
+    fontSize: 14,
   },
 });
 
