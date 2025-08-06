@@ -57,10 +57,13 @@ const styles = StyleSheet.create({
     marginVertical: 16,
     marginHorizontal: 8,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 8,
+    // Add subtle border for better definition in stacked view
+    borderWidth: 0.5,
+    borderColor: 'rgba(255,255,255,0.1)',
   },
   row: {
     flexDirection: 'row',

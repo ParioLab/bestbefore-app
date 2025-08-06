@@ -2,7 +2,7 @@
  * @file src/navigation/AppNavigator.tsx
  * @description
  * Defines the root stack navigator for the BestBefore app.
- * Includes Welcome, Main (TabNavigator), AddItem, ScanBarcode, and ProductDetails screens.
+ * Includes Welcome, Main (TabNavigator), AddItem, ScanBarcode, ProductDetails, and FrequencyReminder screens.
  *
  * @notes
  * - Updated AddItem route to accept an optional full product object for editing.
@@ -15,6 +15,7 @@ import TabNavigator from './TabNavigator';
 import AddItemScreen from '../screens/AddItemScreen';
 import ScanBarcodeScreen from '../screens/ScanBarcodeScreen';
 import ProductDetailsScreen from '../screens/ProductDetailsScreen';
+import FrequencyReminderScreen from '../screens/FrequencyReminderScreen';
 import AuthScreen from '../screens/AuthScreen';
 import { Product as UIProduct } from '../components/ProductCard';
 
@@ -30,6 +31,7 @@ export type RootStackParamList = {
   ProductDetails: { 
     product: UIProduct; 
   };
+  FrequencyReminder: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -43,6 +45,7 @@ const AppNavigator = () => {
       <Stack.Screen name="AddItem" component={AddItemScreen} />
       <Stack.Screen name="ScanBarcode" component={ScanBarcodeScreen} />
       <Stack.Screen name="ProductDetails" component={ProductDetailsScreen} />
+      <Stack.Screen name="FrequencyReminder" component={FrequencyReminderScreen} />
     </Stack.Navigator>
   );
 };

@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../navigation/AppNavigator';
 
 interface SettingsRowProps {
   icon: keyof typeof Feather.glyphMap;
@@ -31,9 +34,10 @@ const SettingsSection: React.FC<{ title: string }> = ({ title }) => {
   return <Text style={styles.sectionTitle}>{title}</Text>;
 };
 
+type SettingsNavProp = StackNavigationProp<RootStackParamList, 'Main'>;
+
 const SettingsScreen = () => {
-  const [reminderFrequency, setReminderFrequency] = useState('5');
-  const [isPickerVisible, setPickerVisible] = useState(false);
+  const navigation = useNavigation<SettingsNavProp>();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -43,9 +47,9 @@ const SettingsScreen = () => {
         <SettingsSection title="Notifications" />
         <SettingsRow 
           icon="bell" 
-          title="Reminder Frequency" 
-          value={`${reminderFrequency} days to exp. date`}
-          onPress={() => setPickerVisible(true)}
+          title="Frequency Reminder"
+          subtitle="Set reminder frequency for each category"
+          onPress={() => navigation.navigate('FrequencyReminder' as any)}
         />
 
         <SettingsSection title="Profile" />
@@ -56,51 +60,33 @@ const SettingsScreen = () => {
           onPress={() => console.log('Navigate to Profile Settings')}
         />
 
+        <SettingsSection title="Billing & Payments" />
+        <SettingsRow 
+          icon="credit-card" 
+          title="Payment Methods"
+          subtitle="Manage your payment options"
+          onPress={() => console.log('Navigate to Payment Methods')}
+        />
+        <SettingsRow 
+          icon="receipt" 
+          title="Billing History"
+          subtitle="View your past invoices"
+          onPress={() => console.log('Navigate to Billing History')}
+        />
+        <SettingsRow 
+          icon="package" 
+          title="Subscription"
+          subtitle="Manage your subscription plan"
+          onPress={() => console.log('Navigate to Subscription')}
+        />
+
         <SettingsSection title="Support" />
         <SettingsRow 
           icon="help-circle" 
           title="Help & Support"
           onPress={() => console.log('Navigate to Help & Support')}
         />
-        <SettingsRow 
-          icon="file-text" 
-          title="Terms of Service"
-          onPress={() => console.log('Navigate to Terms of Service')}
-        />
-        <SettingsRow 
-          icon="shield" 
-          title="Privacy Policy"
-          onPress={() => console.log('Navigate to Privacy Policy')}
-        />
       </ScrollView>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={isPickerVisible}
-        onRequestClose={() => setPickerVisible(false)}
-      >
-        <TouchableOpacity 
-          style={styles.modalOverlay} 
-          activeOpacity={1} 
-          onPressOut={() => setPickerVisible(false)}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.pickerHeader}>
-              <TouchableOpacity onPress={() => setPickerVisible(false)}>
-                <Text style={styles.doneButton}>Done</Text>
-              </TouchableOpacity>
-            </View>
-            <Picker
-              selectedValue={reminderFrequency}
-              onValueChange={(itemValue) => setReminderFrequency(itemValue)}
-            >
-              <Picker.Item label="3 days" value="3" />
-              <Picker.Item label="5 days" value="5" />
-              <Picker.Item label="10 days" value="10" />
-            </Picker>
-          </View>
-        </TouchableOpacity>
-      </Modal>
     </SafeAreaView>
   );
 };
@@ -160,27 +146,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#757575',
     marginRight: 8,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContainer: {
-    backgroundColor: 'white',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-  },
-  pickerHeader: {
-    padding: 16,
-    alignItems: 'flex-end',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-  },
-  doneButton: {
-    fontSize: 16,
-    color: '#007AFF',
-    fontWeight: '600',
   },
 });
 

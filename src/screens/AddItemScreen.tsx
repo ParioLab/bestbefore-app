@@ -8,14 +8,17 @@
  * - Handles both creation and editing modes based on navigation parameters.
  * - Form inputs for name, expiry date, barcode, category, and storage location.
  * - Integrates with product context to perform add or update operations.
+ * - Supports custom category creation with user-specific categories.
  *
  * @dependencies
  * - useProducts: Provides addProduct and updateProduct methods.
+ * - useCategories: Provides category management functionality.
  * - @react-navigation: For routing and retrieving navigation params.
  *
  * @notes
  * - Validates required fields before submission.
  * - Navigates back upon successful operation.
+ * - Allows users to create custom categories.
  */
 
 import React, { useState, useEffect } from 'react';
@@ -33,9 +36,11 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import CustomTextInput from '../components/CustomTextInput';
 import CustomPicker from '../components/CustomPicker';
+import CategoryModal from '../components/CategoryModal';
 import BarcodeIcon from '../../assets/images/barcode-icon.svg';
 import { Ionicons } from '@expo/vector-icons';
 import { useProducts } from '../hooks/useProducts';
+import { useCategories } from '../hooks/useCategories';
 import { Product as UIProduct } from '../components/ProductCard';
 import { useBarcodeLookup } from '../hooks/useBarcodeLookup';
 
@@ -75,6 +80,7 @@ const AddItemScreen: React.FC = () => {
   const navigation = useNavigation<AddItemNavProp>();
   const route = useRoute<AddItemRouteProp>();
   const { addProduct, updateProduct } = useProducts();
+  const { categories, loading: categoriesLoading } = useCategories();
   const { lookupBarcode } = useBarcodeLookup();
 
   // Check if we're editing an existing product
@@ -87,6 +93,7 @@ const AddItemScreen: React.FC = () => {
   const [barcode, setBarcode] = useState(route.params?.barcode ?? '');
   const [category, setCategory] = useState('');
   const [storageLocation, setStorageLocation] = useState('');
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
 
   // Pre-fill when editing
   useEffect(() => {
@@ -147,17 +154,11 @@ const AddItemScreen: React.FC = () => {
     }
   };
 
+  // Convert categories to picker items format
   const categoryItems = [
     { label: 'Select a Category...', value: '' },
-    { label: 'Condiments', value: 'Condiments' },
-    { label: 'Dairy', value: 'Dairy' },
-    { label: 'Produce', value: 'Produce' },
-    { label: 'Meat', value: 'Meat' },
-    { label: 'Bakery', value: 'Bakery' },
-    { label: 'Snacks', value: 'Snacks' },
-    { label: 'Beverages', value: 'Beverages' },
-    { label: 'Frozen', value: 'Frozen' },
-    { label: 'Other', value: 'Other' },
+    ...categories.map(cat => ({ label: cat.name, value: cat.name })),
+    { label: '+ Add New Category', value: 'ADD_NEW' },
   ];
 
   const storageLocationItems = [
@@ -166,6 +167,14 @@ const AddItemScreen: React.FC = () => {
     { label: 'Pantry', value: 'Pantry' },
     { label: 'Freezer', value: 'Freezer' },
   ];
+
+  const handleCategoryChange = (value: string) => {
+    if (value === 'ADD_NEW') {
+      setShowCategoryModal(true);
+    } else {
+      setCategory(value);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -210,7 +219,7 @@ const AddItemScreen: React.FC = () => {
         />
         <CustomPicker
           selectedValue={category}
-          onValueChange={setCategory}
+          onValueChange={handleCategoryChange}
           items={categoryItems}
           style={{ marginBottom: 0 }}
           rightElement={<Ionicons name="chevron-down" size={20} color="#757575" />}
@@ -233,6 +242,11 @@ const AddItemScreen: React.FC = () => {
           </Text>
         </TouchableOpacity>
       </ScrollView>
+
+      <CategoryModal
+        visible={showCategoryModal}
+        onClose={() => setShowCategoryModal(false)}
+      />
     </SafeAreaView>
   );
 };

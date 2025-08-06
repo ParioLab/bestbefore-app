@@ -94,6 +94,7 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
           id: p.id,
           name: p.name,
           expiry_date: p.expiry_date,
+          category: p.category,
         })
       );
     } catch (err) {
