@@ -16,6 +16,7 @@ import AddItemScreen from '../screens/AddItemScreen';
 import ScanBarcodeScreen from '../screens/ScanBarcodeScreen';
 import ProductDetailsScreen from '../screens/ProductDetailsScreen';
 import FrequencyReminderScreen from '../screens/FrequencyReminderScreen';
+import PremiumPlanScreen from '../screens/PremiumPlanScreen';
 import AuthScreen from '../screens/AuthScreen';
 import { Product as UIProduct } from '../components/ProductCard';
 
@@ -32,6 +33,7 @@ export type RootStackParamList = {
     product: UIProduct; 
   };
   FrequencyReminder: undefined;
+  PremiumPlan: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -46,6 +48,7 @@ const AppNavigator = () => {
       <Stack.Screen name="ScanBarcode" component={ScanBarcodeScreen} />
       <Stack.Screen name="ProductDetails" component={ProductDetailsScreen} />
       <Stack.Screen name="FrequencyReminder" component={FrequencyReminderScreen} />
+      <Stack.Screen name="PremiumPlan" component={PremiumPlanScreen} />
     </Stack.Navigator>
   );
 };

@@ -25,7 +25,7 @@ const SettingsRow: React.FC<SettingsRowProps> = ({ icon, title, subtitle, value,
         {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
       </View>
       {value && <Text style={styles.value}>{value}</Text>}
-      <Feather name="chevron-right" size={24} color="#757575" />
+      {onPress && <Feather name="chevron-right" size={24} color="#757575" />}
     </TouchableOpacity>
   );
 };
@@ -61,23 +61,18 @@ const SettingsScreen = () => {
         />
 
         <SettingsSection title="Billing & Payments" />
+
         <SettingsRow 
-          icon="credit-card" 
-          title="Payment Methods"
-          subtitle="Manage your payment options"
-          onPress={() => console.log('Navigate to Payment Methods')}
+          icon="package" 
+          title="Premium"
+          subtitle="Manage your subscription plan"
+          onPress={() => navigation.navigate('PremiumPlan' as any)}
         />
         <SettingsRow 
           icon="receipt" 
           title="Billing History"
           subtitle="View your past invoices"
           onPress={() => console.log('Navigate to Billing History')}
-        />
-        <SettingsRow 
-          icon="package" 
-          title="Subscription"
-          subtitle="Manage your subscription plan"
-          onPress={() => console.log('Navigate to Subscription')}
         />
 
         <SettingsSection title="Support" />
@@ -124,7 +119,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 8,
-    backgroundColor: '#F2F2F2',
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
