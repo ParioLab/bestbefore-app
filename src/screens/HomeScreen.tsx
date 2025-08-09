@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   loadingIndicator: { marginTop: 50 },
   listContainer: { 
     padding: 16,
-    paddingBottom: 100, // Extra padding for stacked effect
+    paddingBottom: 120, // Extra padding for stacked effect and floating tab bar
   },
   scrollView: {
     flex: 1,

@@ -8,7 +8,7 @@ import PlusIcon from '../../assets/images/plus-icon.svg';
 import SettingsIcon from '../../assets/images/settings-icon.svg';
 import { BottomTabBar } from '@react-navigation/bottom-tabs';
 import { useNavigation } from '@react-navigation/native';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View, StyleSheet, Platform } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './AppNavigator';
 
@@ -29,7 +29,14 @@ const CustomTabBar = (props: any) => {
       };
     }
   });
-  return <BottomTabBar {...props} descriptors={newDescriptors} />;
+  
+  return (
+    <View style={styles.tabBarContainer}>
+      <View style={styles.tabBarWrapper}>
+        <BottomTabBar {...props} descriptors={newDescriptors} />
+      </View>
+    </View>
+  );
 };
 
 const TabNavigator = () => {
@@ -49,17 +56,21 @@ const TabNavigator = () => {
             IconComponent = SettingsIcon;
           }
 
-          return IconComponent ? <IconComponent width={size} height={size} fill={color} /> : null;
+          return IconComponent ? (
+            <IconComponent 
+              width={size} 
+              height={size} 
+              fill="#FFFFFF" 
+              color="#FFFFFF"
+              style={{ color: '#FFFFFF' }}
+            />
+          ) : null;
         },
-        tabBarActiveTintColor: '#121712',
-        tabBarInactiveTintColor: 'gray',
+        tabBarActiveTintColor: '#FFFFFF',
+        tabBarInactiveTintColor: '#FFFFFF',
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarStyle: {
-          backgroundColor: '#FFFFFF',
-          borderTopWidth: 1,
-          borderTopColor: '#F0F5F0',
-        },
+        tabBarStyle: styles.tabBarStyle,
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
@@ -74,7 +85,13 @@ const TabNavigator = () => {
               accessibilityLabel="Scan Barcode"
               testID="scan-barcode-tab"
             >
-              <PlusIcon width={28} height={28} fill={accessibilityState?.selected ? '#121712' : 'gray'} />
+              <PlusIcon 
+                width={28} 
+                height={28} 
+                fill='#FFFFFF' 
+                color='#FFFFFF'
+                style={{ color: '#FFFFFF' }}
+              />
             </TouchableOpacity>
           ),
         }}
@@ -83,5 +100,39 @@ const TabNavigator = () => {
     </Tab.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  tabBarContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'transparent',
+    paddingHorizontal: 80,
+    paddingBottom: Platform.OS === 'ios' ? 34 : 20, // Account for safe area
+  },
+  tabBarWrapper: {
+    backgroundColor: '#1C1C1E',
+    borderRadius: 25,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  tabBarStyle: {
+    backgroundColor: 'transparent',
+    borderTopWidth: 0,
+    elevation: 0,
+    borderRadius: 25,
+    height: 50,
+    paddingBottom: 6,
+    paddingTop: 6,
+  },
+});
 
 export default TabNavigator; 

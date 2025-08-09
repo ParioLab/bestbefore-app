@@ -41,7 +41,7 @@ const SettingsScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         <Text style={styles.header}>Settings</Text>
         
         <SettingsSection title="Notifications" />
@@ -90,6 +90,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+  },
+  scrollContent: {
+    paddingBottom: 100, // Padding for floating tab bar
   },
   header: {
     fontSize: 24,
