@@ -10,9 +10,9 @@ interface PlanCardProps {
   savings?: string;
   isPopular?: boolean;
   isSelected?: boolean;
-  backgroundColor: string;
   iconName: keyof typeof Feather.glyphMap;
   iconColor: string;
+  features: string[];
   onPress: () => void;
 }
 
@@ -23,45 +23,88 @@ const PlanCard: React.FC<PlanCardProps> = ({
   savings, 
   isPopular = false, 
   isSelected = false,
-  backgroundColor,
   iconName,
   iconColor,
+  features,
   onPress 
 }) => {
   return (
     <TouchableOpacity 
       style={[
         styles.card, 
-        { backgroundColor },
-        isSelected && styles.selectedCard,
+        isSelected ? styles.selectedCard : styles.defaultCard,
         isPopular && styles.popularCard
       ]} 
       onPress={onPress}
     >
       {isPopular && (
-        <View style={styles.popularBadge}>
-          <Text style={styles.popularText}>Most Popular</Text>
+        <View style={[
+          styles.popularBadge,
+          isSelected && styles.popularBadgeSelected
+        ]}>
+          <Text style={[
+            styles.popularText,
+            isSelected && styles.popularTextSelected
+          ]}>Most Popular</Text>
         </View>
       )}
       
       <View style={styles.cardContent}>
         <View style={styles.cardHeader}>
-          <Text style={styles.cardTitle}>{title}</Text>
+          <Text style={[
+            styles.cardTitle,
+            isSelected && styles.cardTitleSelected
+          ]}>{title}</Text>
         </View>
         
-        <Text style={styles.duration}>{duration}</Text>
+        {title === '1 Year' && (
+          <Text style={[
+            styles.duration,
+            isSelected && styles.durationSelected
+          ]}>{duration}</Text>
+        )}
         
         <View style={styles.savingsContainer}>
           {savings ? (
-            <Text style={styles.savings}>{savings}</Text>
+            <Text style={[
+              styles.savings,
+              isSelected && styles.savingsSelected
+            ]}>{savings}</Text>
           ) : (
             <View style={styles.savingsPlaceholder} />
           )}
         </View>
+        
+        {/* Features */}
+        <View style={[
+          styles.featuresContainer,
+          title === '1 Year' && styles.featuresContainerWithDuration
+        ]}>
+          {features.map((feature, index) => (
+            <View key={index} style={styles.featureItem}>
+              <Feather 
+                name="check" 
+                size={12} 
+                color={isSelected ? '#CCCCCC' : '#757575'} 
+                style={styles.checkIcon}
+              />
+              <Text style={[
+                styles.featureText,
+                isSelected && styles.featureTextSelected
+              ]}>{feature}</Text>
+            </View>
+          ))}
+        </View>
       </View>
       
-      <View style={[styles.priceContainer, { backgroundColor: `${backgroundColor}40` }]}>
-        <Text style={styles.price}>{price}</Text>
+      <View style={[
+        styles.priceContainer, 
+        isSelected ? styles.priceContainerSelected : styles.priceContainerDefault
+      ]}>
+        <Text style={[
+          styles.price,
+          isSelected && styles.priceSelected
+        ]}>{price}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -76,40 +119,38 @@ const PremiumPlanScreen = () => {
       id: '1year',
       title: '1 Year',
       duration: '12 months',
-      price: '$99.99/year',
-      savings: 'Save 40%',
+      price: '$39.99/year',
       isPopular: true,
-      backgroundColor: '#E8F5E8',
       iconName: 'star' as keyof typeof Feather.glyphMap,
-      iconColor: '#FF6B6B'
+      iconColor: '#FF6B6B',
+      features: ['Unlimited scans', 'Health Tips and Badges', 'Ad free']
     },
     {
       id: '6months',
       title: '6 Months',
       duration: '6 months',
-      price: '$59.99/6mo',
-      savings: 'Save 20%',
-      backgroundColor: '#FFE8F0',
+      price: '$21.99/6mo',
       iconName: 'music' as keyof typeof Feather.glyphMap,
-      iconColor: '#FF6B6B'
+      iconColor: '#FF6B6B',
+      features: ['Unlimited scans', 'Health Tips and Badges', 'Ad free']
     },
     {
       id: '3months',
       title: '3 Months',
       duration: '3 months',
-      price: '$34.99/3mo',
-      backgroundColor: '#F5F5F5',
+      price: '$11.99/3mo',
       iconName: 'calendar' as keyof typeof Feather.glyphMap,
-      iconColor: '#FFD93D'
+      iconColor: '#FFD93D',
+      features: ['Unlimited scans', 'Health Tips and Badges', 'Ad free']
     },
     {
       id: '1month',
       title: '1 Month',
       duration: '1 month',
-      price: '$14.99/mo',
-      backgroundColor: '#E8F4FD',
+      price: '$3.99/mo',
       iconName: 'shopping-bag' as keyof typeof Feather.glyphMap,
-      iconColor: '#FF6B6B'
+      iconColor: '#FF6B6B',
+      features: ['Unlimited scans', 'Health Tips and Badges', 'Ad free']
     }
   ];
 
@@ -156,12 +197,11 @@ const PremiumPlanScreen = () => {
                 title={plans[0].title}
                 duration={plans[0].duration}
                 price={plans[0].price}
-                savings={plans[0].savings}
                 isPopular={plans[0].isPopular}
                 isSelected={selectedPlan === plans[0].id}
-                backgroundColor={plans[0].backgroundColor}
                 iconName={plans[0].iconName}
                 iconColor={plans[0].iconColor}
+                features={plans[0].features}
                 onPress={() => handlePlanSelect(plans[0].id)}
               />
             </View>
@@ -170,12 +210,11 @@ const PremiumPlanScreen = () => {
                 title={plans[1].title}
                 duration={plans[1].duration}
                 price={plans[1].price}
-                savings={plans[1].savings}
                 isPopular={plans[1].isPopular}
                 isSelected={selectedPlan === plans[1].id}
-                backgroundColor={plans[1].backgroundColor}
                 iconName={plans[1].iconName}
                 iconColor={plans[1].iconColor}
+                features={plans[1].features}
                 onPress={() => handlePlanSelect(plans[1].id)}
               />
             </View>
@@ -188,12 +227,11 @@ const PremiumPlanScreen = () => {
                 title={plans[2].title}
                 duration={plans[2].duration}
                 price={plans[2].price}
-                savings={plans[2].savings}
                 isPopular={plans[2].isPopular}
                 isSelected={selectedPlan === plans[2].id}
-                backgroundColor={plans[2].backgroundColor}
                 iconName={plans[2].iconName}
                 iconColor={plans[2].iconColor}
+                features={plans[2].features}
                 onPress={() => handlePlanSelect(plans[2].id)}
               />
             </View>
@@ -202,12 +240,11 @@ const PremiumPlanScreen = () => {
                 title={plans[3].title}
                 duration={plans[3].duration}
                 price={plans[3].price}
-                savings={plans[3].savings}
                 isPopular={plans[3].isPopular}
                 isSelected={selectedPlan === plans[3].id}
-                backgroundColor={plans[3].backgroundColor}
                 iconName={plans[3].iconName}
                 iconColor={plans[3].iconColor}
+                features={plans[3].features}
                 onPress={() => handlePlanSelect(plans[3].id)}
               />
             </View>
@@ -309,13 +346,16 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
     position: 'relative',
-    height: 180,
+    height: 240,
     justifyContent: 'space-between',
   },
+  defaultCard: {
+    backgroundColor: '#FFFFFF',
+  },
   selectedCard: {
+    backgroundColor: '#000000',
     borderWidth: 2,
     borderColor: '#007AFF',
-    backgroundColor: '#F0F8FF',
   },
   popularCard: {
     borderWidth: 2,
@@ -331,10 +371,16 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     zIndex: 1,
   },
+  popularBadgeSelected: {
+    backgroundColor: '#FFD700',
+  },
   popularText: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#141414',
+    color: '#000000',
+  },
+  popularTextSelected: {
+    color: '#000000',
   },
   cardContent: {
     flex: 1,
@@ -343,16 +389,21 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     marginTop: 8,
   },
-
   cardTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#141414',
+    color: '#000000',
+  },
+  cardTitleSelected: {
+    color: '#FFFFFF',
   },
   duration: {
     fontSize: 16,
     color: '#757575',
     marginBottom: 8,
+  },
+  durationSelected: {
+    color: '#CCCCCC',
   },
   savingsContainer: {
     height: 22,
@@ -363,6 +414,9 @@ const styles = StyleSheet.create({
     color: '#4CAF50',
     fontWeight: '600',
   },
+  savingsSelected: {
+    color: '#4CAF50',
+  },
   savingsPlaceholder: {
     height: 22,
   },
@@ -372,13 +426,22 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignSelf: 'flex-start',
   },
+  priceContainerDefault: {
+    backgroundColor: '#F0F0F0',
+  },
+  priceContainerSelected: {
+    backgroundColor: '#333333',
+  },
   price: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#141414',
+    color: '#000000',
+  },
+  priceSelected: {
+    color: '#FFFFFF',
   },
   subscribeButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#000000',
     marginHorizontal: 16,
     marginTop: 32,
     paddingVertical: 16,
@@ -400,6 +463,28 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginHorizontal: 16,
     lineHeight: 18,
+  },
+  featuresContainer: {
+    marginTop: 8,
+  },
+  featuresContainerWithDuration: {
+    marginTop: 0.5,
+  },
+  featureItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  checkIcon: {
+    marginRight: 6,
+  },
+  featureText: {
+    fontSize: 12,
+    color: '#757575',
+    flex: 1,
+  },
+  featureTextSelected: {
+    color: '#CCCCCC',
   },
 });
 
