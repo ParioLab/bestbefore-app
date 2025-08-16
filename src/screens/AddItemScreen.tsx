@@ -188,18 +188,29 @@ const AddItemScreen: React.FC = () => {
         <View style={{ width: 24 }} />
       </View>
       <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.labelContainer}>
+          <Text style={styles.label}>Product Name *</Text>
+        </View>
         <CustomTextInput
           placeholder="Product Name"
           value={productName}
           onChangeText={setProductName}
           testID="product-name-input"
+          required={true}
         />
+        <View style={styles.labelContainer}>
+          <Text style={styles.label}>Expiration Date *</Text>
+        </View>
         <CustomTextInput
           placeholder="Expiration Date (YYYY-MM-DD)"
           value={expiryDate}
           onChangeText={setExpiryDate}
           testID="product-expiry-input"
+          required={true}
         />
+        <View style={styles.labelContainer}>
+          <Text style={styles.label}>Barcode Number *</Text>
+        </View>
         <CustomTextInput
           placeholder="Barcode Number"
           value={barcode}
@@ -216,6 +227,7 @@ const AddItemScreen: React.FC = () => {
             </TouchableOpacity>
           }
           testID="product-barcode-input"
+          required={true}
         />
         <CustomPicker
           selectedValue={category}
@@ -224,6 +236,8 @@ const AddItemScreen: React.FC = () => {
           style={{ marginBottom: 0 }}
           rightElement={<Ionicons name="chevron-down" size={20} color="#757575" />}
           testID="product-category-picker"
+          required={true}
+          label="Category"
         />
         <CustomPicker
           selectedValue={storageLocation}
@@ -231,6 +245,7 @@ const AddItemScreen: React.FC = () => {
           items={storageLocationItems}
           rightElement={<Ionicons name="chevron-down" size={20} color="#757575" />}
           testID="product-storage-picker"
+          label="Storage Location"
         />
         <TouchableOpacity
           style={styles.submitButton}
@@ -268,6 +283,15 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 16,
+  },
+  labelContainer: {
+    marginBottom: 8,
+    paddingHorizontal: 4,
+  },
+  label: {
+    fontFamily: 'Manrope-Medium',
+    fontSize: 14,
+    color: '#141414',
   },
   barcodeButton: {
     width: 32,

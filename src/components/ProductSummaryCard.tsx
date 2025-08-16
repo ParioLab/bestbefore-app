@@ -16,7 +16,7 @@ const ProductSummaryCard: React.FC<ProductSummaryCardProps> = ({ product }) => {
   const expiry = new Date(product.expiryDate);
   const diff = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
   const isExpiringSoon = diff <= 2;
-  const cardColor = isExpiringSoon ? '#FF6F61' : '#4CD964'; // red if expiring soon, green otherwise
+  const cardColor = isExpiringSoon ? '#FF6F61' : '#1DB233'; // red if expiring soon, green otherwise
 
   const getExpiryStatus = () => {
     if (diff < 0) return 'Expired';

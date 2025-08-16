@@ -9,17 +9,34 @@ interface CustomPickerProps {
   style?: object;
   rightElement?: ReactNode;
   testID?: string;
+  required?: boolean;
+  label?: string;
 }
 
-const CustomPicker: React.FC<CustomPickerProps> = ({ selectedValue, onValueChange, items, style, rightElement, testID }) => {
+const CustomPicker: React.FC<CustomPickerProps> = ({ selectedValue, onValueChange, items, style, rightElement, testID, required, label }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const selectedLabel = items.find(item => item.value === selectedValue)?.label || items[0]?.label;
   const isPlaceholder = !selectedValue || selectedValue === items[0]?.value;
+  const showRequiredError = required && isPlaceholder;
 
   return (
     <>
-      <TouchableOpacity style={[styles.container, style]} onPress={() => setModalVisible(true)} testID={testID}>
+      {label && (
+        <View style={styles.labelContainer}>
+          <Text style={styles.label}>{label}</Text>
+          {required && <Text style={styles.required}> *</Text>}
+        </View>
+      )}
+      <TouchableOpacity 
+        style={[
+          styles.container, 
+          style, 
+          showRequiredError && styles.requiredError
+        ]} 
+        onPress={() => setModalVisible(true)} 
+        testID={testID}
+      >
         <Text style={[styles.text, isPlaceholder && styles.placeholderText]}>
           {selectedLabel}
         </Text>
@@ -64,6 +81,21 @@ const CustomPicker: React.FC<CustomPickerProps> = ({ selectedValue, onValueChang
 };
 
 const styles = StyleSheet.create({
+  labelContainer: {
+    flexDirection: 'row',
+    marginBottom: 8,
+    paddingHorizontal: 4,
+  },
+  label: {
+    fontFamily: 'Manrope-Medium',
+    fontSize: 14,
+    color: '#141414',
+  },
+  required: {
+    fontFamily: 'Manrope-Medium',
+    fontSize: 14,
+    color: '#FF3B30',
+  },
   container: {
     backgroundColor: '#F2F2F2',
     borderRadius: 12,
@@ -83,6 +115,11 @@ const styles = StyleSheet.create({
   },
   placeholderText: {
     color: '#757575',
+  },
+  requiredError: {
+    borderWidth: 1,
+    borderColor: '#FF3B30',
+    backgroundColor: '#FFF5F5',
   },
   rightElementContainer: {
     position: 'absolute',

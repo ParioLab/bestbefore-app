@@ -3,18 +3,22 @@ import { View, TextInput, StyleSheet, TextInputProps } from 'react-native';
 
 interface CustomTextInputProps extends TextInputProps {
   rightElement?: ReactNode;
+  required?: boolean;
 }
 
 const CustomTextInput: React.FC<CustomTextInputProps> = (props) => {
-  const { rightElement, style, ...textInputProps } = props;
+  const { rightElement, style, required, value, ...textInputProps } = props;
+  const showRequiredError = required && !value;
+  
   return (
-    <View style={[styles.container, style]}> 
+    <View style={[styles.container, style, showRequiredError && styles.requiredError]}> 
       <TextInput
         style={[
           styles.input,
           rightElement ? { paddingRight: 40 } : null
         ]}
         placeholderTextColor="#757575"
+        value={value}
         {...textInputProps}
       />
       {rightElement && (
@@ -49,6 +53,10 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  requiredError: {
+    borderColor: '#FF0000',
+    borderWidth: 1,
   },
 });
 

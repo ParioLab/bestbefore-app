@@ -42,7 +42,6 @@ cross join (values
   ('Snacks'),
   ('Beverages'),
   ('Frozen'),
-  ('Condiments'),
-  ('Other')
+  ('Condiments')
 ) as c(name)
 on conflict (user_id, name) do nothing; 

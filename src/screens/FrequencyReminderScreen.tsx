@@ -16,29 +16,25 @@ import {
   Modal,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 import { useCategoryReminders } from '../hooks/useCategoryReminders';
 import { useCategories } from '../hooks/useCategories';
 
 interface SettingsRowProps {
-  icon: keyof typeof Feather.glyphMap;
   title: string;
   value?: string;
   onPress?: () => void;
 }
 
-const SettingsRow: React.FC<SettingsRowProps> = ({ icon, title, value, onPress }) => {
+const SettingsRow: React.FC<SettingsRowProps> = ({ title, value, onPress }) => {
   return (
     <TouchableOpacity style={styles.row} onPress={onPress}>
-      <View style={styles.iconContainer}>
-        <Feather name={icon} size={24} color="#141414" />
-      </View>
       <View style={styles.textContainer}>
         <Text style={styles.rowTitle}>{title}</Text>
       </View>
       {value && <Text style={styles.value}>{value}</Text>}
-      <Feather name="chevron-right" size={24} color="#757575" />
     </TouchableOpacity>
   );
 };
@@ -76,11 +72,14 @@ const FrequencyReminderScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity 
+          style={styles.backButton} 
+          onPress={() => navigation.goBack()}
+        >
           <Feather name="arrow-left" size={24} color="#141414" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Frequency Reminder</Text>
-        <View style={{ width: 24 }} />
+        <View style={styles.placeholder} />
       </View>
       
       <ScrollView>
@@ -93,7 +92,6 @@ const FrequencyReminderScreen: React.FC = () => {
           return (
             <SettingsRow 
               key={category.id}
-              icon="bell" 
               title={category.name}
               value={`${reminder.reminder_days} days to exp. date`}
               onPress={() => handleReminderPress({
@@ -167,30 +165,38 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#141414',
   },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  placeholder: {
+    width: 40,
+  },
   description: {
     fontSize: 14,
     color: '#757575',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    fontFamily: 'Manrope-Regular',
+    fontFamily: 'Manrope-Bold',
+    fontWeight: 'bold',
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: 16,
     paddingHorizontal: 16,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderBottomWidth: 1,
     borderBottomColor: '#F2F2F2',
-  },
-  iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 8,
-    backgroundColor: '#F2F2F2',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
   },
   textContainer: {
     flex: 1,
