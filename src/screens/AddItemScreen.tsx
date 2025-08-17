@@ -37,12 +37,14 @@ import { RootStackParamList } from '../navigation/AppNavigator';
 import CustomTextInput from '../components/CustomTextInput';
 import CustomPicker from '../components/CustomPicker';
 import CategoryModal from '../components/CategoryModal';
+import CalendarPicker from '../components/CalendarPicker';
 import BarcodeIcon from '../../assets/images/barcode-icon.svg';
 import { Ionicons } from '@expo/vector-icons';
 import { useProducts } from '../hooks/useProducts';
 import { useCategories } from '../hooks/useCategories';
 import { Product as UIProduct } from '../components/ProductCard';
 import { useBarcodeLookup } from '../hooks/useBarcodeLookup';
+import dayjs from 'dayjs';
 
 type AddItemNavProp = StackNavigationProp<RootStackParamList, 'AddItem'>;
 type AddItemRouteProp = RouteProp<RootStackParamList, 'AddItem'>;
@@ -94,6 +96,7 @@ const AddItemScreen: React.FC = () => {
   const [category, setCategory] = useState('');
   const [storageLocation, setStorageLocation] = useState('');
   const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [showCalendarPicker, setShowCalendarPicker] = useState(false);
 
   // Pre-fill when editing
   useEffect(() => {
@@ -176,6 +179,15 @@ const AddItemScreen: React.FC = () => {
     }
   };
 
+  const handleDateSelect = (date: string) => {
+    setExpiryDate(date);
+  };
+
+  const formatExpiryDate = (date: string) => {
+    if (!date) return '';
+    return dayjs(date).format('MMM DD, YYYY');
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
@@ -201,13 +213,16 @@ const AddItemScreen: React.FC = () => {
         <View style={styles.labelContainer}>
           <Text style={styles.label}>Expiration Date *</Text>
         </View>
-        <CustomTextInput
-          placeholder="Expiration Date (YYYY-MM-DD)"
-          value={expiryDate}
-          onChangeText={setExpiryDate}
+        <TouchableOpacity
+          style={styles.dateInputContainer}
+          onPress={() => setShowCalendarPicker(true)}
           testID="product-expiry-input"
-          required={true}
-        />
+        >
+          <Text style={[styles.dateInputText, !expiryDate && styles.placeholderText]}>
+            {expiryDate ? formatExpiryDate(expiryDate) : 'Tap to select expiry date'}
+          </Text>
+          <Ionicons name="calendar-outline" size={20} color="#757575" />
+        </TouchableOpacity>
         <View style={styles.labelContainer}>
           <Text style={styles.label}>Barcode Number *</Text>
         </View>
@@ -262,6 +277,14 @@ const AddItemScreen: React.FC = () => {
         visible={showCategoryModal}
         onClose={() => setShowCategoryModal(false)}
       />
+
+      <CalendarPicker
+        visible={showCalendarPicker}
+        onClose={() => setShowCalendarPicker(false)}
+        onDateSelect={handleDateSelect}
+        selectedDate={expiryDate}
+        minimumDate={dayjs().format('YYYY-MM-DD')}
+      />
     </SafeAreaView>
   );
 };
@@ -312,6 +335,27 @@ const styles = StyleSheet.create({
     fontFamily: 'Manrope-Bold',
     fontSize: 14,
     color: '#FFFFFF',
+  },
+  dateInputContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    backgroundColor: '#FFFFFF',
+    marginBottom: 16,
+  },
+  dateInputText: {
+    fontFamily: 'Manrope-Medium',
+    fontSize: 16,
+    color: '#141414',
+    flex: 1,
+  },
+  placeholderText: {
+    color: '#757575',
   },
 });
 
