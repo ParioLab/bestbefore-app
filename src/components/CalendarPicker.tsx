@@ -28,6 +28,7 @@ const CalendarPicker: React.FC<CalendarPickerProps> = ({
 }) => {
   const [currentMonth, setCurrentMonth] = useState(dayjs(selectedDate || dayjs()));
   const [selectedDay, setSelectedDay] = useState(dayjs(selectedDate || dayjs()));
+  const [showYearPicker, setShowYearPicker] = useState(false);
 
   const getDaysInMonth = (date: dayjs.Dayjs) => {
     const start = date.startOf('month');
@@ -74,6 +75,16 @@ const CalendarPicker: React.FC<CalendarPickerProps> = ({
     setCurrentMonth(prev => prev.add(1, 'month'));
   };
 
+  const generateYearOptions = () => {
+    const currentYear = dayjs().year();
+    const years = [];
+    // Generate years from current year - 10 to current year + 10
+    for (let year = currentYear - 10; year <= currentYear + 10; year++) {
+      years.push(year);
+    }
+    return years;
+  };
+
   const days = getDaysInMonth(currentMonth);
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -98,10 +109,20 @@ const CalendarPicker: React.FC<CalendarPickerProps> = ({
             <Ionicons name="chevron-back" size={20} color="#141414" />
           </TouchableOpacity>
           <Text style={styles.monthText}>
-            {currentMonth.format('MMMM YYYY')}
+            {currentMonth.format('MMMM')}
           </Text>
           <TouchableOpacity onPress={goToNextMonth} style={styles.monthButton}>
             <Ionicons name="chevron-forward" size={20} color="#141414" />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.yearSelector}>
+          <TouchableOpacity 
+            style={styles.yearButton}
+            onPress={() => setShowYearPicker(true)}
+          >
+            <Text style={styles.yearText}>{currentMonth.format('YYYY')}</Text>
+            <Ionicons name="chevron-down" size={16} color="#757575" />
           </TouchableOpacity>
         </View>
 
@@ -159,6 +180,52 @@ const CalendarPicker: React.FC<CalendarPickerProps> = ({
           </TouchableOpacity>
         </View>
       </SafeAreaView>
+
+      {/* Year Picker Modal */}
+      <Modal
+        visible={showYearPicker}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={() => setShowYearPicker(false)}
+      >
+        <View style={styles.yearPickerOverlay}>
+          <View style={styles.yearPickerContainer}>
+            <View style={styles.yearPickerHeader}>
+              <Text style={styles.yearPickerTitle}>Select Year</Text>
+              <TouchableOpacity 
+                onPress={() => setShowYearPicker(false)}
+                style={styles.yearPickerCloseButton}
+              >
+                <Ionicons name="close" size={24} color="#141414" />
+              </TouchableOpacity>
+            </View>
+            <ScrollView style={styles.yearPickerScroll}>
+              <View style={styles.yearPickerGrid}>
+                {generateYearOptions().map((year) => (
+                  <TouchableOpacity
+                    key={year}
+                    style={[
+                      styles.yearOption,
+                      year === currentMonth.year() && styles.selectedYearOption
+                    ]}
+                    onPress={() => {
+                      setCurrentMonth(prev => prev.year(year));
+                      setShowYearPicker(false);
+                    }}
+                  >
+                    <Text style={[
+                      styles.yearOptionText,
+                      year === currentMonth.year() && styles.selectedYearOptionText
+                    ]}>
+                      {year}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </Modal>
   );
 };
@@ -198,6 +265,26 @@ const styles = StyleSheet.create({
     fontFamily: 'Manrope-Bold',
     fontSize: 18,
     color: '#141414',
+  },
+  yearSelector: {
+    alignItems: 'center',
+    paddingBottom: 16,
+  },
+  yearButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    backgroundColor: '#F8F8F8',
+  },
+  yearText: {
+    fontFamily: 'Manrope-Medium',
+    fontSize: 16,
+    color: '#141414',
+    marginRight: 8,
   },
   weekDaysHeader: {
     flexDirection: 'row',
@@ -278,6 +365,66 @@ const styles = StyleSheet.create({
     fontFamily: 'Manrope-Bold',
     fontSize: 14,
     color: '#FFFFFF',
+  },
+  yearPickerOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  yearPickerContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    width: '80%',
+    maxHeight: '70%',
+  },
+  yearPickerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F5F0',
+  },
+  yearPickerTitle: {
+    fontFamily: 'Manrope-Bold',
+    fontSize: 18,
+    color: '#141414',
+  },
+  yearPickerCloseButton: {
+    padding: 4,
+  },
+  yearPickerScroll: {
+    padding: 20,
+  },
+  yearPickerGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  yearOption: {
+    width: '30%',
+    aspectRatio: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 8,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    backgroundColor: '#FFFFFF',
+  },
+  selectedYearOption: {
+    backgroundColor: '#000',
+    borderColor: '#000',
+  },
+  yearOptionText: {
+    fontFamily: 'Manrope-Medium',
+    fontSize: 16,
+    color: '#141414',
+  },
+  selectedYearOptionText: {
+    color: '#FFFFFF',
+    fontFamily: 'Manrope-Bold',
   },
 });
 
